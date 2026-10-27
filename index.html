@@ -1256,13 +1256,19 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE / GÜÇLENDİRİLMİŞ OTOMATİK VERİ EŞLEŞTİRME ---
+    // --- KESİN ÇÖZÜM: KULLANICI DEĞİŞİKLİKLERİNİ ESAS ALAN SİSTEM ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      citiesData = initialCitiesData;
-      localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
+      // Kullanıcının tarayıcısında yaptığı silme/düzenleme işlemleri varsa onu yükle, yoksa varsayılanı kullan
+      const savedCitiesJson = localStorage.getItem('travel_friend_cities_v5');
+      if (savedCitiesJson) {
+        citiesData = JSON.parse(savedCitiesJson);
+      } else {
+        citiesData = initialCitiesData;
+        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
+      }
 
       renderSidebar();
 
@@ -1274,7 +1280,6 @@
         existingTexts.add(docSnap.data().text);
       });
 
-      // Eğer yeterli veri yoksa veya eksikse yeni zengin verileri yükle
       if (postsSnapshot.size < 150) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
@@ -1294,10 +1299,8 @@
         posts = [];
         snapshot.forEach((docSnap) => {
           let data = docSnap.data();
-          // Şehir isimlerindeki olası küçük harf veya boşluk uyumsuzluklarını otomatik düzelt
           if (data.city) {
             data.city = data.city.toUpperCase().trim();
-            if (data.city === "DENPASAR") data.city = "BALI";
           }
           posts.push({ firestoreId: docSnap.id, ...data });
         });
@@ -1362,7 +1365,7 @@
         } else {
           citiesData[country] = [formattedCity];
         }
-        localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
@@ -1405,7 +1408,7 @@
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
+          localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         }
         await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
@@ -1423,13 +1426,23 @@
       alert("City request rejected and removed.");
     }
 
+    // ŞEHİR SİLİNDİĞİNDE ARTIK KALICI OLARAK HAFIZAYA KAYDEDİLİR VE GERİ GELMEZ
     async function deleteCity(country, city, event) {
       event.stopPropagation();
       if (!confirm(`Delete "${city}"?`)) return;
+      
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
-      localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
-      if (selectedCity === city) selectedCity = 'BALI';
+      
+      // Güncel listeyi localStorage'a kalıcı olarak kaydet
+      localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
+
+      if (selectedCity === city) {
+        // Mevcut seçili şehir silindiyse başka bir şehre geç
+        const firstCategory = Object.keys(citiesData)[0];
+        selectedCity = firstCategory ? citiesData[firstCategory][0] : 'BANGKOK';
+      }
+
       renderSidebar();
       renderPopularCities();
       renderFeed();
@@ -1451,7 +1464,7 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
-        localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
@@ -1512,17 +1525,6 @@
       renderFeed();
       updateInboxBadge();
       renderLiveChat();
-    }
-
-    function getMostPopularCity() {
-      if (!posts || posts.length === 0) return 'BALI';
-      const counts = {};
-      posts.forEach(p => { counts[p.city] = (counts[p.city] || 0) + 1; });
-      let maxCity = 'BALI', maxCount = -1;
-      for (const [city, count] of Object.entries(counts)) {
-        if (count > maxCount) { maxCount = count; maxCity = city; }
-      }
-      return maxCity;
     }
 
     function initMostPopularCity() {
