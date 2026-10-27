@@ -806,7 +806,7 @@
       "Russia 🇷🇺": ["MOSCOW", "SAINT PETERSBURG", "KAZAN", "SOCHI"],
       "Ukraine 🇺🇦": ["KYIV", "ODESA", "LVIV"],
       "Serbia 🇷🇸": ["BELGRADE"],
-      "Bosnia and Herzegovina 🇦🇹": ["SARAJEVO", "MOSTAR"],
+      "Bosnia and Herzegovina 🇧🇦": ["SARAJEVO", "MOSTAR"],
       "Albania 🇦🇱": ["TIRANA"],
       "North Macedonia 🇲🇰": ["SKOPJE", "OHRID"],
       "Montenegro 🇲🇪": ["KOTOR", "PODGORICA"],
@@ -881,10 +881,11 @@
         }
       });
 
+      // Her az popüler şehre de en az 4-5 yorum ekle
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
           if (!superPopular.includes(cityName)) {
-            for (let k = 1; k <= 7; k++) {
+            for (let k = 1; k <= 5; k++) {
               const author = usernames[(cityName.length + k) % usernames.length];
               const replyAuthor = usernames[(cityName.length + k + 4) % usernames.length];
               const langKey = k === 3 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
@@ -1146,12 +1147,12 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ (AKILLI BİRLEŞTİRME) ---
+    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // 1. Şehirleri Firestore'dan Kontrol Et ve Boşsa Otomatik Ekle
+      // 1. Şehirleri Firestore'dan Kontrol Et
       const citiesRef = collection(db, "cities");
       const citiesSnapshot = await getDocs(citiesRef);
       if (citiesSnapshot.empty) {
@@ -1170,17 +1171,16 @@
         renderPopularCities();
       });
 
-      // 2. Gönderileri (Posts) Kontrol Et: Kullanıcıların yorumlarını SİLMEDEN eksik starter postları ekle
+      // 2. Gönderileri Kontrol Et
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
-      
+
       const existingTexts = new Set();
       postsSnapshot.forEach(docSnap => {
         existingTexts.add(docSnap.data().text);
       });
 
-      // Eğer toplam post sayısı örnek paket sayısından azsa, eksik olanları kullanıcı yazılarına dokunmadan ekle
-      if (postsSnapshot.size < 200) {
+      if (postsSnapshot.size < 300) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
           if (!existingTexts.has(p.text)) {
@@ -1203,7 +1203,7 @@
         renderFeed();
       });
 
-      // 3. Kullanıcıları Dinle / Kontrol Et
+      // 3. Kullanıcıları Dinle
       const usersRef = collection(db, "users");
       const usersSnap = await getDocs(usersRef);
       if (usersSnap.empty) {
@@ -1435,11 +1435,29 @@
       document.getElementById('inboxCount').innerText = messages.filter(m => m.to === currentUser.username).length;
     }
 
+    // --- EN ÇOK POSTU/YORUMU OLAN ÜLKELERİ EN ÜSTE ÇIKARAN AKILLI MÜNÜ FONKSİYONU ---
     function renderSidebar() {
       const container = document.getElementById('sidebarCityListContainer');
       const searchTerm = document.getElementById('citySearchInput').value.toLowerCase();
-      let html = '';
+
+      // Ülkelerin toplam gönderi sayılarını hesapla
+      const countryPostCounts = {};
       for (const [category, cityList] of Object.entries(citiesData)) {
+        let total = 0;
+        cityList.forEach(city => {
+          total += posts.filter(p => p.city === city).length;
+        });
+        countryPostCounts[category] = total;
+      }
+
+      // Ülkeleri en çok paylaşımı olandan en aza doğru sırala
+      const sortedCountries = Object.keys(citiesData).sort((a, b) => {
+        return countryPostCounts[b] - countryPostCounts[a];
+      });
+
+      let html = '';
+      for (const category of sortedCountries) {
+        const cityList = citiesData[category];
         const filtered = cityList.filter(c => c.toLowerCase().includes(searchTerm) || category.toLowerCase().includes(searchTerm));
         if (filtered.length > 0) {
           html += `<div class="category-title">${category}</div><ul class="city-list">`;
@@ -1676,7 +1694,7 @@
         if (data && data.country_code) {
           const country = data.country_code;
           if (country === 'RU' || country === 'UA') currentLang = 'RU';
-          else if (country === 'TR') currentLang, currentLang = 'TR';
+          else if (country === 'TR') currentLang = 'TR';
           document.getElementById('langLabel').innerText = currentLang;
           updateTexts();
           renderSidebar();
