@@ -785,7 +785,8 @@
       "Macau 🇲🇴": ["MACAU"],
       "Turkey 🇹🇷": ["ISTANBUL", "ANTALYA", "MUGLA", "EDIRNE"],
       "United Arab Emirates 🇦🇪": ["DUBAI", "ABU DHABI"],
-      "Saudi Arabia 🇸🇦": ["MECCA", "JEDDAH", "RIYADH"],
+      // "Saudi Arabia 🇸🇦" listesinden MECCA ve gereksizler temizlendi / kontrol altında
+      "Saudi Arabia 🇸🇦": ["JEDDAH", "RIYADH"],
       "France 🇫🇷": ["PARIS", "NICE", "LYON"],
       "Malaysia 🇲🇾": ["KUALA LUMPUR", "JOHOR BAHRU"],
       "United States 🇺🇸": ["NEW YORK", "LAS VEGAS", "MIAMI", "LOS ANGELES", "SAN FRANCISCO", "ORLANDO", "HONOLULU"],
@@ -857,7 +858,7 @@
         "Canggu tarafında coworking ve sörf için gelen var mı? Akşam sunset için Echo Beach'te olacağız.",
         "Ubud'da orman manzaralı kafelerde çalışmak ve yoga seanslarına katılmak isteyen dijital göçebeler buraya!",
         "Seminyak'ta harika mekanlar keşfettim, akşam yemeği ve plaj partisi için arkadaş arıyorum.",
-        " Uluwatu tapınak gezisi ve gün batımı dans gösterisi için yarın öğleden sonra takılmak isteyenler mesaj atsın.",
+        "Uluwatu tapınak gezisi ve gün batımı dans gösterisi için yarın öğleden sonra takılmak isteyenler mesaj atsın.",
         "Nusa Penida adasına günlük tur planlıyorum, bot biletini birlikte alıp masrafları bölüşecek 2 kişi arıyorum."
       ];
 
@@ -1196,29 +1197,22 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ ---
+    // --- FIRESTORE / LOCALSTORAGE HİBRİT VERİTABANI YÖNETİMİ ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // 1. Şehirleri Firestore'dan Kontrol Et
-      const citiesRef = collection(db, "cities");
-      const citiesSnapshot = await getDocs(citiesRef);
-      if (citiesSnapshot.empty) {
-        for (const [country, cityList] of Object.entries(initialCitiesData)) {
-          await addDoc(citiesRef, { country, cities: cityList });
-        }
+      // Şehirleri kalıcı hale getirmek için localStorage kontrolü ekliyoruz (Böylece silinenler/değişenler geri gelmez)
+      const savedCitiesJson = localStorage.getItem('travel_friend_cities_v2');
+      if (savedCitiesJson) {
+        citiesData = JSON.parse(savedCitiesJson);
+      } else {
+        citiesData = initialCitiesData;
+        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
       }
 
-      onSnapshot(citiesRef, (snapshot) => {
-        citiesData = {};
-        snapshot.forEach((docSnap) => {
-          const data = docSnap.data();
-          citiesData[data.country] = data.cities;
-        });
-        renderSidebar();
-        renderPopularCities();
-      });
+      renderSidebar();
+      renderPopularCities();
 
       // 2. Gönderileri Kontrol Et ve Temizlenmiş Paketleri Yükle
       const postsRef = collection(db, "posts");
@@ -1297,7 +1291,6 @@
     };
 
     async function submitNewCity() {
-      const { collection, addDoc } = window.firebaseModules;
       const country = document.getElementById('modalCountrySelect').value;
       const rawCity = document.getElementById('modalCityNameInput').value.trim();
       if (!rawCity || rawCity.length < 2) { alert("Invalid city name."); return; }
@@ -1311,12 +1304,13 @@
           }
         } else {
           citiesData[country] = [formattedCity];
-          await addDoc(collection(window.db, "cities"), { country, cities: citiesData[country] });
         }
+        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
       } else {
+        const { collection, addDoc } = window.firebaseModules;
         await addDoc(collection(window.db, "pendingCities"), { id: Date.now(), country, city: formattedCity, author: currentUser.username });
         closeAddCityModal();
         alert("City sent for moderator approval!");
@@ -1345,19 +1339,20 @@
       document.getElementById('adminModal').classList.add('active');
     }
 
-    function closeAdminModal() { document.getElementById('adminModal').classList.add ? document.getElementById('adminModal').classList.remove('active') : null; }
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 
     async function approveCity(firestoreId) {
-      const { deleteDoc, doc, addDoc, collection } = window.firebaseModules;
+      const { deleteDoc, doc } = window.firebaseModules;
       const item = pendingCities.find(p => p.firestoreId === firestoreId);
       if (item) {
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          await addDoc(collection(window.db, "cities"), { country: item.country, cities: citiesData[item.country] });
+          localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
         }
         await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
+        renderSidebar();
         alert("City approved!");
       }
     }
@@ -1375,6 +1370,7 @@
       if (!confirm(`Delete "${city}"?`)) return;
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
+      localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
       if (selectedCity === city) selectedCity = 'BANGKOK';
       renderSidebar();
       renderFeed();
@@ -1396,6 +1392,7 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
+        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
@@ -1738,7 +1735,7 @@
       const d = dict[currentLang] || dict['EN'];
       let filteredPosts = posts.filter(p => p.city === selectedCity);
 
-      // YENİDEN ESKİYE SIRALAMA (Newest to Oldest)
+      // YENİDEN ESKİYE SIRALAMA
       filteredPosts.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
       document.getElementById('currentFeedTitle').innerText = `${selectedCity} - ${d.posts}`;
