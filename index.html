@@ -565,11 +565,11 @@
       <div class="live-chat-box">
         <div class="popular-title" style="margin-bottom:0.8rem;">
           <i class="fa-solid fa-comments" style="color:var(--primary);"></i> 
-          <span id="liveChatTitle">Global Travel Chat Room</span>
+          <span id="liveChatTitle">Global Travel Chat Room (AI Enabled)</span>
         </div>
         <div class="chat-messages-container" id="chatMessagesContainer"></div>
         <div class="chat-input-area">
-          <input type="text" id="chatInputMessage" placeholder="Type a message to global chat..." onkeypress="handleChatKeyPress(event)">
+          <input type="text" id="chatInputMessage" placeholder="Type a message or ask @gemini..." onkeypress="handleChatKeyPress(event)">
           <button class="btn-submit" id="chatSendBtn" style="margin:0; padding: 0.5rem 1rem;" onclick="sendLiveChatMessage()">Send</button>
         </div>
       </div>
@@ -676,13 +676,53 @@
     </div>
   </div>
 
+  <!-- Firebase ve Gemini Modül Entegrasyonu -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getVertexAI, getGenerativeModel } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-vertexai.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyC52CorXLQ7ptg0opomthHImJfVxVxlBsxY",
+      authDomain: "travelfriendx.firebaseapp.com",
+      projectId: "travelfriendx",
+      storageBucket: "travelfriendx.firebasestorage.app",
+      messagingSenderId: "372398537384",
+      appId: "1:372398537384:web:2c0fe07c8b2c181fb4a09d",
+      measurementId: "G-MD8FT4EBMB"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Vertex AI / Gemini Tanımlaması
+    const vertexAI = getVertexAI(app);
+    const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
+
+    // Global Değişkenler
+    window.db = db;
+    window.model = model;
+    window.firebaseModules = { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp };
+    
+    // Uygulama Başlatma Tetikleyicisi
+    if (window.startTravelApp) {
+      window.startTravelApp();
+    }
+  </script>
+
   <script>
-    // VARSAYILAN DİL İNGİLİZCE (EN)
     let currentLang = 'EN';
     let selectedCity = 'BANGKOK';
     let currentUser = null;
     let targetDmUser = '';
     let editingCityInfo = { country: '', oldName: '' };
+
+    let posts = [];
+    let messages = [];
+    let users = [];
+    let liveChatMessages = [];
+    let citiesData = {};
+    let pendingCities = [];
 
     const allWorldCountries = [
       "Albania 🇦🇱", "Argentina 🇦🇷", "Australia 🇦🇺", "Austria 🇦🇹", "Azerbaijan 🇦🇿",
@@ -763,169 +803,6 @@
       "Romania 🇷🇴": ["BUCHAREST", "BRASOV"],
       "Kosovo 🇽🇰": ["PRISTINA"],
       "Slovenia 🇸🇮": ["LJUBLJANA"]
-    };
-
-    let citiesData = JSON.parse(localStorage.getItem('travel_cities_data_en')) || initialCitiesData;
-    let pendingCities = JSON.parse(localStorage.getItem('travel_pending_cities')) || [];
-    let liveChatMessages = JSON.parse(localStorage.getItem('travel_live_chat')) || [];
-
-    const dict = {
-      EN: {
-        search: "Search country or city...",
-        addCustom: "+ Add Custom City",
-        bannerTitle: "Find Travel Friends, Share Tips!",
-        bannerDesc: "Connect instantly with travelers worldwide.",
-        postPlaceholder: "Write a tip, question or travel plan...",
-        submitBtn: "Post",
-        popularTitle: "Popular Cities",
-        postCount: "posts",
-        dmBtn: "Message",
-        replyBtn: "Reply",
-        inbox: "Messages",
-        adminPanel: "Approval Panel",
-        liveChatTitle: "Global Travel Chat Room",
-        chatPlaceholder: "Type a message to global chat...",
-        send: "Send",
-        login: "Log In",
-        register: "Register",
-        logout: "Log Out",
-        suggest: "💡 Suggest",
-        cancel: "Cancel",
-        close: "Close",
-        save: "Save",
-        update: "Update",
-        posts: "Posts"
-      },
-      RU: {
-        search: "Поиск страны или города...",
-        addCustom: "+ Добавить город",
-        bannerTitle: "Найди попутчика, делись советами!",
-        bannerDesc: "Общайтесь с путешественниками по всему миру.",
-        postPlaceholder: "Напишите совет, вопрос или план поездки...",
-        submitBtn: "Опубликовать",
-        popularTitle: "Популярные города",
-        postCount: "постов",
-        dmBtn: "Сообщение",
-        replyBtn: "Ответить",
-        inbox: "Сообщения",
-        adminPanel: "Панель модерации",
-        liveChatTitle: "Общий чат путешественников",
-        chatPlaceholder: "Напишите в общий чат...",
-        send: "Отправить",
-        login: "Войти",
-        register: "Регистрация",
-        logout: "Выйти",
-        suggest: "💡 Идея",
-        cancel: "Отмена",
-        close: "Закрыть",
-        save: "Сохранить",
-        update: "Обновить",
-        posts: "Публикации"
-      },
-      TR: {
-        search: "Ülke veya Şehir ara...",
-        addCustom: "+ Kendi Şehrini Ekle",
-        bannerTitle: "Seyahat Arkadaşını Bul, İpuçlarını Paylaş!",
-        bannerDesc: "Dünyadaki tüm ülkelerdeki gezginlerle anında bağlantı kur.",
-        postPlaceholder: "Bu şehir hakkında ipucu, soru veya seyahat planını yaz...",
-        submitBtn: "Paylaş",
-        popularTitle: "Popüler Şehirler",
-        postCount: "yazı",
-        dmBtn: "Mesaj At",
-        replyBtn: "Cevap Ver",
-        inbox: "Mesajlar",
-        adminPanel: "Onay Paneli",
-        liveChatTitle: "Genel Seyahat Sohbet Odası",
-        chatPlaceholder: "Genel sohbet odasına mesaj yaz...",
-        send: "Gönder",
-        login: "Giriş Yap",
-        register: "Kayıt Ol",
-        logout: "Çıkış",
-        suggest: "💡 Öner",
-        cancel: "İptal",
-        close: "Kapat",
-        save: "Kaydet",
-        update: "Güncelle",
-        posts: "Paylaşımlar"
-      },
-      ES: {
-        search: "Buscar país o ciudad...",
-        addCustom: "+ Agregar Ciudad",
-        bannerTitle: "¡Encuentra compañeros y comparte tips!",
-        bannerDesc: "Conéctate al instante con viajeros de todo el mundo.",
-        postPlaceholder: "Escribe un consejo, pregunta o plan de viaje...",
-        submitBtn: "Publicar",
-        popularTitle: "Ciudades Populares",
-        postCount: "publicaciones",
-        dmBtn: "Mensaje",
-        replyBtn: "Responder",
-        inbox: "Mensajes",
-        adminPanel: "Panel de Aprobación",
-        liveChatTitle: "Sala de Chat Global",
-        chatPlaceholder: "Escribe un mensaje...",
-        send: "Enviar",
-        login: "Iniciar Sesión",
-        register: "Registrarse",
-        logout: "Cerrar Sesión",
-        suggest: "💡 Sugerir",
-        cancel: "Cancelar",
-        close: "Cerrar",
-        save: "Guardar",
-        update: "Actualizar",
-        posts: "Publicaciones"
-      },
-      HI: {
-        search: "देश या शहर खोजें...",
-        addCustom: "+ अपना शहर जोड़ें",
-        bannerTitle: "यात्रा साथी खोजें, सुझाव साझा करें!",
-        bannerDesc: "दुनिया भर के यात्रियों से तुरंत जुड़ें।",
-        postPlaceholder: "इस शहर के बारे में सुझाव या योजना लिखें...",
-        submitBtn: "पोस्ट करें",
-        popularTitle: "लोकप्रिय शहर",
-        postCount: "पोस्ट",
-        dmBtn: "संदेश",
-        replyBtn: "उत्तर दें",
-        inbox: "संदेश",
-        adminPanel: "अनुమోदन पैनल",
-        liveChatTitle: "वैश्विक यात्रा चैट",
-        chatPlaceholder: "चैट में संदेश लिखें...",
-        send: "भेजें",
-        login: "लॉग इन",
-        register: "पंजीकरण",
-        logout: "लॉग आउट",
-        suggest: "💡 सुझाव",
-        cancel: "रद्द करें",
-        close: "बंद करें",
-        save: "सहेजें",
-        update: "अपडेट करें",
-        posts: "पोस्ट"
-      },
-      ZH: {
-        search: "搜索国家或城市...",
-        addCustom: "+ 添加自定义城市",
-        bannerTitle: "寻找旅行伙伴，分享攻略！",
-        bannerDesc: "立即与全球旅行者建立联系。",
-        postPlaceholder: "写下关于这个城市的贴士、问题或计划...",
-        submitBtn: "发布",
-        popularTitle: "热门城市",
-        postCount: "条动态",
-        dmBtn: "私信",
-        replyBtn: "回复",
-        inbox: "消息",
-        adminPanel: "审核面板",
-        liveChatTitle: "全球旅行聊天室",
-        chatPlaceholder: "在公共聊天室发送消息...",
-        send: "发送",
-        login: "登录",
-        register: "注册",
-        logout: "登出",
-        suggest: "💡 推荐",
-        cancel: "取消",
-        close: "关闭",
-        save: "保存",
-        update: "更新",
-        posts: "动态"
-      }
     };
 
     function generateRichForumPosts() {
@@ -1041,24 +918,169 @@
       return posts;
     }
 
-    const CURRENT_DATA_VERSION = 'v11_ip_geolocation_en';
-    if (localStorage.getItem('travel_data_version') !== CURRENT_DATA_VERSION) {
-      localStorage.removeItem('travel_posts');
-      localStorage.removeItem('travel_cities_data_en');
-      localStorage.setItem('travel_data_version', CURRENT_DATA_VERSION);
-    }
-
-    let posts = JSON.parse(localStorage.getItem('travel_posts')) || generateRichForumPosts();
-    let messages = JSON.parse(localStorage.getItem('travel_messages')) || [];
-    let users = JSON.parse(localStorage.getItem('travel_users')) || [
-      { username: 'admin', email: 'admin@admin.com', password: '188199', isAdmin: true },
-      { username: 'caner_travels', email: 'caner@example.com', password: '123', isAdmin: false }
-    ];
+    const dict = {
+      EN: {
+        search: "Search country or city...",
+        addCustom: "+ Add Custom City",
+        bannerTitle: "Find Travel Friends, Share Tips!",
+        bannerDesc: "Connect instantly with travelers worldwide.",
+        postPlaceholder: "Write a tip, question or travel plan...",
+        submitBtn: "Post",
+        popularTitle: "Popular Cities",
+        postCount: "posts",
+        dmBtn: "Message",
+        replyBtn: "Reply",
+        inbox: "Messages",
+        adminPanel: "Approval Panel",
+        liveChatTitle: "Global Travel Chat Room (AI Enabled)",
+        chatPlaceholder: "Type a message or ask @gemini...",
+        send: "Send",
+        login: "Log In",
+        register: "Register",
+        logout: "Log Out",
+        suggest: "💡 Suggest",
+        cancel: "Cancel",
+        close: "Close",
+        save: "Save",
+        update: "Update",
+        posts: "Posts"
+      },
+      RU: {
+        search: "Поиск страны или города...",
+        addCustom: "+ Добавить город",
+        bannerTitle: "Найди попутчика, делись советами!",
+        bannerDesc: "Общайтесь с путешественниками по всему миру.",
+        postPlaceholder: "Напишите совет, вопрос или план поездки...",
+        submitBtn: "Опубликовать",
+        popularTitle: "Популярные города",
+        postCount: "постов",
+        dmBtn: "Сообщение",
+        replyBtn: "Ответить",
+        inbox: "Сообщения",
+        adminPanel: "Панель модерации",
+        liveChatTitle: "Общий чат (с ИИ Gemini)",
+        chatPlaceholder: "Напишите сообщение или спросите @gemini...",
+        send: "Отправить",
+        login: "Войти",
+        register: "Регистрация",
+        logout: "Выйти",
+        suggest: "💡 Идея",
+        cancel: "Отмена",
+        close: "Закрыть",
+        save: "Сохранить",
+        update: "Обновить",
+        posts: "Публикации"
+      },
+      TR: {
+        search: "Ülke veya Şehir ara...",
+        addCustom: "+ Kendi Şehrini Ekle",
+        bannerTitle: "Seyahat Arkadaşını Bul, İpuçlarını Paylaş!",
+        bannerDesc: "Dünyadaki tüm ülkelerdeki gezginlerle anında bağlantı kur.",
+        postPlaceholder: "Bu şehir hakkında ipucu, soru veya seyahat planını yaz...",
+        submitBtn: "Paylaş",
+        popularTitle: "Popüler Şehirler",
+        postCount: "yazı",
+        dmBtn: "Mesaj At",
+        replyBtn: "Cevap Ver",
+        inbox: "Mesajlar",
+        adminPanel: "Onay Paneli",
+        liveChatTitle: "Genel Seyahat Sohbet Odası (Yapay Zeka Destekli)",
+        chatPlaceholder: "Mesaj yazın veya @gemini'ye sorun...",
+        send: "Gönder",
+        login: "Giriş Yap",
+        register: "Kayıt Ol",
+        logout: "Çıkış",
+        suggest: "💡 Öner",
+        cancel: "İptal",
+        close: "Kapat",
+        save: "Kaydet",
+        update: "Güncelle",
+        posts: "Paylaşımlar"
+      },
+      ES: {
+        search: "Buscar país o ciudad...",
+        addCustom: "+ Agregar Ciudad",
+        bannerTitle: "¡Encuentra compañeros y comparte tips!",
+        bannerDesc: "Conéctate al instante con viajeros de todo el mundo.",
+        postPlaceholder: "Escribe un consejo, pregunta o plan de viaje...",
+        submitBtn: "Publicar",
+        popularTitle: "Ciudades Populares",
+        postCount: "publicaciones",
+        dmBtn: "Mensaje",
+        replyBtn: "Responder",
+        inbox: "Mensajes",
+        adminPanel: "Panel de Aprobación",
+        liveChatTitle: "Sala de Chat Global (Con IA)",
+        chatPlaceholder: "Escribe un mensaje o pregunta a @gemini...",
+        send: "Enviar",
+        login: "Iniciar Sesión",
+        register: "Registrarse",
+        logout: "Cerrar Sesión",
+        suggest: "💡 Sugerir",
+        cancel: "Cancelar",
+        close: "Cerrar",
+        save: "Guardar",
+        update: "Actualizar",
+        posts: "Publicaciones"
+      },
+      HI: {
+        search: "देश या शहर खोजें...",
+        addCustom: "+ अपना शहर जोड़ें",
+        bannerTitle: "यात्रा साथी खोजें, सुझाव साझा करें!",
+        bannerDesc: "दुनिया भर के यात्रियों से तुरंत जुड़ें।",
+        postPlaceholder: "इस शहर के बारे में सुझाव या योजना लिखें...",
+        submitBtn: "पोस्ट करें",
+        popularTitle: "लोकप्रिय शहर",
+        postCount: "पोस्ट",
+        dmBtn: "संदेश",
+        replyBtn: "उत्तर दें",
+        inbox: "संदेश",
+        adminPanel: "अनुमोदन पैनल",
+        liveChatTitle: "वैश्विक यात्रा चैट (AI सक्षम)",
+        chatPlaceholder: "संदेश लिखें या @gemini से पूछें...",
+        send: "भेजें",
+        login: "लॉग इन",
+        register: "पंजीकरण",
+        logout: "लॉग आउट",
+        suggest: "💡 सुझाव",
+        cancel: "रद्द करें",
+        close: "बंद करें",
+        save: "सहेजें",
+        update: "अपडेट करें",
+        posts: "पोस्ट"
+      },
+      ZH: {
+        search: "搜索国家或城市...",
+        addCustom: "+ 添加自定义城市",
+        bannerTitle: "寻找旅行伙伴，分享攻略！",
+        bannerDesc: "立即与全球旅行者建立联系。",
+        postPlaceholder: "写下关于这个城市的贴士、问题或计划...",
+        submitBtn: "发布",
+        popularTitle: "热门城市",
+        postCount: "条动态",
+        dmBtn: "私信",
+        replyBtn: "回复",
+        inbox: "消息",
+        adminPanel: "审核面板",
+        liveChatTitle: "全球旅行聊天室 (AI支持)",
+        chatPlaceholder: "发送消息或咨询 @gemini...",
+        send: "发送",
+        login: "登录",
+        register: "注册",
+        logout: "登出",
+        suggest: "💡 推荐",
+        cancel: "取消",
+        close: "关闭",
+        save: "保存",
+        update: "更新",
+        posts: "动态"
+      }
+    };
 
     function transliterateToLatin(text) {
       const cyrillicMap = {
         'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y',
-        'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
+        'к':'k','л':'l','m':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
         'х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
       };
       let clean = text.toLowerCase().trim();
@@ -1133,25 +1155,120 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    function submitNewCity() {
+    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ ---
+    window.startTravelApp = async function() {
+      const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
+      const db = window.db;
+
+      // 1. Şehirleri Firestore'dan Kontrol Et ve Boşsa Otomatik Ekle
+      const citiesRef = collection(db, "cities");
+      const citiesSnapshot = await getDocs(citiesRef);
+      if (citiesSnapshot.empty) {
+        for (const [country, cityList] of Object.entries(initialCitiesData)) {
+          await addDoc(citiesRef, { country, cities: cityList });
+        }
+      }
+
+      onSnapshot(citiesRef, (snapshot) => {
+        citiesData = {};
+        snapshot.forEach((docSnap) => {
+          const data = docSnap.data();
+          citiesData[data.country] = data.cities;
+        });
+        renderSidebar();
+        renderPopularCities();
+      });
+
+      // 2. Gönderileri (Posts) Kontrol Et ve Boşsa Zengin Örnekleri Otomatik Ekle
+      const postsRef = collection(db, "posts");
+      const postsSnapshot = await getDocs(postsRef);
+      if (postsSnapshot.empty) {
+        const richInitialPosts = generateRichForumPosts();
+        for (const p of richInitialPosts) {
+          await addDoc(postsRef, {
+            city: p.city,
+            text: p.text,
+            author: p.author,
+            date: p.date,
+            replies: p.replies || []
+          });
+        }
+      }
+
+      onSnapshot(postsRef, (snapshot) => {
+        posts = [];
+        snapshot.forEach((docSnap) => posts.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        renderSidebar();
+        renderPopularCities();
+        renderFeed();
+      });
+
+      // 3. Kullanıcıları Dinle / Kontrol Et
+      const usersRef = collection(db, "users");
+      const usersSnap = await getDocs(usersRef);
+      if (usersSnap.empty) {
+        await addDoc(usersRef, { username: 'admin', email: 'admin@admin.com', password: '188199', isAdmin: true });
+        await addDoc(usersRef, { username: 'caner_travels', email: 'caner@example.com', password: '123', isAdmin: false });
+      }
+
+      onSnapshot(usersRef, (snapshot) => {
+        users = [];
+        snapshot.forEach((docSnap) => users.push({ id: docSnap.id, ...docSnap.data() }));
+      });
+
+      // 4. Bekleyen Şehirleri Dinle
+      const pendingRef = collection(db, "pendingCities");
+      onSnapshot(pendingRef, (snapshot) => {
+        pendingCities = [];
+        snapshot.forEach((docSnap) => pendingCities.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        updatePendingBadge();
+      });
+
+      // 5. Canlı Sohbet Mesajlarını Dinle
+      const chatRef = collection(db, "liveChat");
+      const qChat = query(chatRef, orderBy("timestamp", "asc"));
+      onSnapshot(qChat, (snapshot) => {
+        liveChatMessages = [];
+        snapshot.forEach((docSnap) => liveChatMessages.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        renderLiveChat();
+      });
+
+      // 6. Özel Mesajları Dinle
+      const msgRef = collection(db, "messages");
+      onSnapshot(msgRef, (snapshot) => {
+        messages = [];
+        snapshot.forEach((docSnap) => messages.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        updateInboxBadge();
+      });
+
+      initAuth();
+      initMostPopularCity();
+      updateTexts();
+      detectUserLanguageByIP();
+    };
+
+    async function submitNewCity() {
+      const { collection, addDoc } = window.firebaseModules;
       const country = document.getElementById('modalCountrySelect').value;
       const rawCity = document.getElementById('modalCityNameInput').value.trim();
       if (!rawCity || rawCity.length < 2) { alert("Invalid city name."); return; }
       const formattedCity = transliterateToLatin(rawCity);
 
       if (currentUser.isAdmin) {
-        if (!citiesData[country]) citiesData[country] = [];
-        if (!citiesData[country].includes(formattedCity)) {
-          citiesData[country].push(formattedCity);
-          localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+        let foundKey = Object.keys(citiesData).find(k => k === country);
+        if (foundKey) {
+          if (!citiesData[foundKey].includes(formattedCity)) {
+            citiesData[foundKey].push(formattedCity);
+          }
+        } else {
+          citiesData[country] = [formattedCity];
+          await addDoc(collection(window.db, "cities"), { country, cities: citiesData[country] });
         }
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
       } else {
-        pendingCities.push({ id: Date.now(), country, city: formattedCity, author: currentUser.username });
-        localStorage.setItem('travel_pending_cities', JSON.stringify(pendingCities));
-        updatePendingBadge();
+        await addDoc(collection(window.db, "pendingCities"), { id: Date.now(), country, city: formattedCity, author: currentUser.username });
         closeAddCityModal();
         alert("City sent for moderator approval!");
       }
@@ -1166,7 +1283,7 @@
       } else {
         let html = '';
         pendingCities.forEach(item => {
-          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem;"><div><strong>📍 ${item.city}</strong><div style="font-size:0.8rem; color:var(--text-muted);">${item.country} (Author: ${item.author})</div></div><div><button class="btn-submit" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="approveCity(${item.id})">Approve</button></div></div>`;
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem;"><div><strong>📍 ${item.city}</strong><div style="font-size:0.8rem; color:var(--text-muted);">${item.country} (Author: ${item.author})</div></div><div><button class="btn-submit" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="approveCity('${item.firestoreId}')">Approve</button></div></div>`;
         });
         list.innerHTML = html;
       }
@@ -1175,30 +1292,26 @@
 
     function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
 
-    function approveCity(id) {
-      const index = pendingCities.findIndex(p => p.id === id);
-      if (index !== -1) {
-        const item = pendingCities[index];
+    async function approveCity(firestoreId) {
+      const { deleteDoc, doc, addDoc, collection } = window.firebaseModules;
+      const item = pendingCities.find(p => p.firestoreId === firestoreId);
+      if (item) {
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+          await addDoc(collection(window.db, "cities"), { country: item.country, cities: citiesData[item.country] });
         }
-        pendingCities.splice(index, 1);
-        localStorage.setItem('travel_pending_cities', JSON.stringify(pendingCities));
-        updatePendingBadge();
+        await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
-        renderSidebar();
         alert("City approved!");
       }
     }
 
-    function deleteCity(country, city, event) {
+    async function deleteCity(country, city, event) {
       event.stopPropagation();
       if (!confirm(`Delete "${city}"?`)) return;
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
-      localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
       if (selectedCity === city) selectedCity = 'BANGKOK';
       renderSidebar();
       renderFeed();
@@ -1220,9 +1333,7 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
-        localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
-        saveData();
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
         renderSidebar();
@@ -1241,15 +1352,16 @@
       document.getElementById('regUsername').value = suggested;
     }
 
-    function handleRegister() {
+    async function handleRegister() {
+      const { collection, addDoc } = window.firebaseModules;
       const username = document.getElementById('regUsername').value.trim();
       const email = document.getElementById('regEmail').value.trim();
       const password = document.getElementById('regPassword').value;
       if (!username || !email || !password) return alert("Please fill all fields.");
       if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) return alert("Username already taken!");
       if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) return alert("Account already exists with this email.");
-      users.push({ username, email, password, isAdmin: false });
-      localStorage.setItem('travel_users', JSON.stringify(users));
+      
+      await addDoc(collection(window.db, "users"), { username, email, password, isAdmin: false });
       currentUser = { username, email, isAdmin: false };
       localStorage.setItem('travel_current_user', JSON.stringify(currentUser));
       closeAuthModals();
@@ -1375,23 +1487,19 @@
       container.innerHTML = html;
     }
 
-    let autoScrollInterval;
-    function startAutoScroll() {
+    setInterval(() => {
       const container = document.getElementById('popularCardsContainer');
-      if (!container) return;
-
-      autoScrollInterval = setInterval(() => {
-        if (!container.matches(':hover')) {
-          container.scrollLeft += 1;
-          if (container.scrollLeft >= (container.scrollWidth - container.clientWidth - 5)) {
-            container.scrollLeft = 0;
-          }
+      if (container && !container.matches(':hover')) {
+        container.scrollLeft += 1;
+        if (container.scrollLeft >= (container.scrollWidth - container.clientWidth - 5)) {
+          container.scrollLeft = 0;
         }
-      }, 30);
-    }
+      }
+    }, 30);
 
     function renderLiveChat() {
       const container = document.getElementById('chatMessagesContainer');
+      if (!container) return;
 
       if (liveChatMessages.length === 0) {
         container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 1rem;">No messages in global chat yet.</div>`;
@@ -1400,43 +1508,68 @@
 
       let html = '';
       liveChatMessages.forEach(m => {
-        html += `<div class="chat-msg-item"><span>${m.author}:</span> ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time}</span></div>`;
+        html += `<div class="chat-msg-item"><span>${m.author}:</span> ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time || ''}</span></div>`;
       });
       container.innerHTML = html;
       container.scrollTop = container.scrollHeight;
     }
 
-    function sendLiveChatMessage() {
+    async function sendLiveChatMessage() {
       if (!currentUser) { alert("Please log in to chat!"); openLoginModal(); return; }
       const input = document.getElementById('chatInputMessage');
       const text = input.value.trim();
       if (!text) return;
 
-      liveChatMessages.push({
-        id: Date.now(),
+      const { collection, addDoc, serverTimestamp } = window.firebaseModules;
+      const chatRef = collection(window.db, "liveChat");
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      await addDoc(chatRef, {
         author: currentUser.username,
         text,
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+        time: timeStr,
+        timestamp: serverTimestamp()
       });
-      localStorage.setItem('travel_live_chat', JSON.stringify(liveChatMessages));
+
       input.value = '';
-      renderLiveChat();
+
+      if (text.toLowerCase().includes("@gemini") || text.includes("?")) {
+        try {
+          const result = await window.model.generateContent(text);
+          const response = await result.response;
+          const aiReply = response.text();
+
+          await addDoc(chatRef, {
+            author: "🤖 Gemini AI Assistant",
+            text: aiReply,
+            time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+            timestamp: serverTimestamp()
+          });
+        } catch (error) {
+          console.error("Gemini API Error:", error);
+        }
+      }
     }
 
     function handleChatKeyPress(e) {
       if (e.key === 'Enter') sendLiveChatMessage();
     }
 
-    function createNewPost() {
+    async function createNewPost() {
       if (!currentUser) return alert("Please log in to post!");
       const text = document.getElementById('postText').value.trim();
       if (!text) return alert("Please write a message.");
-      posts.unshift({ id: Date.now(), city: selectedCity, text, author: currentUser.username, date: new Date().toISOString().split('T')[0], replies: [] });
-      saveData();
+
+      const { collection, addDoc } = window.firebaseModules;
+      await addDoc(collection(window.db, "posts"), {
+        city: selectedCity,
+        text,
+        author: currentUser.username,
+        date: new Date().toISOString().split('T')[0],
+        replies: []
+      });
+
       document.getElementById('postText').value = '';
-      renderSidebar();
-      renderPopularCities();
-      renderFeed();
     }
 
     function toggleReplyForm(postId) {
@@ -1445,15 +1578,20 @@
       if (el) el.classList.toggle('active');
     }
 
-    function submitReply(postId) {
+    async function submitReply(postId) {
       if (!currentUser) return alert("Please log in to reply!");
       const text = document.getElementById(`reply-input-${postId}`).value.trim();
       if (!text) return;
-      const post = posts.find(p => p.id === postId);
+
+      const post = posts.find(p => p.firestoreId === postId || p.id === postId);
       if (post) {
         if (!post.replies) post.replies = [];
         post.replies.push({ id: Date.now(), author: currentUser.username, text, date: new Date().toISOString().split('T')[0] });
-        saveData();
+        
+        const { updateDoc, doc } = window.firebaseModules;
+        if (post.firestoreId) {
+          await updateDoc(doc(window.db, "posts", post.firestoreId), { replies: post.replies });
+        }
         renderFeed();
       }
     }
@@ -1480,7 +1618,8 @@
       filteredPosts.forEach(post => {
         const canDmPostAuthor = hasUserRepliedToPost(post, post.author);
         const isSelfPost = currentUser && post.author === currentUser.username;
-        html += `<div class="post-card"><div class="post-header"><div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div><span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${post.date}</span></div><div class="post-content">${post.text}</div><div class="post-footer"><button class="btn-reply" onclick="toggleReplyForm(${post.id})"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}</div><div class="reply-form" id="reply-form-${post.id}"><textarea id="reply-input-${post.id}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea><div style="display:flex; justify-content:flex-end;"><button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply(${post.id})">${d.replyBtn}</button></div></div>${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => `<div class="reply-card"><div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${currentUser && r.author === currentUser.username ? '(You)' : ''}</span><span style="font-size:0.75rem; color:var(--text-muted);">${r.date}</span></div><div style="font-size:0.9rem;">${r.text}</div></div>`).join('')}</div>` : ''}</div>`;
+        const pId = post.firestoreId || post.id;
+        html += `<div class="post-card"><div class="post-header"><div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div><span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${post.date}</span></div><div class="post-content">${post.text}</div><div class="post-footer"><button class="btn-reply" onclick="toggleReplyForm('${pId}')"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}</div><div class="reply-form" id="reply-form-${pId}"><textarea id="reply-input-${pId}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea><div style="display:flex; justify-content:flex-end;"><button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply('${pId}')">${d.replyBtn}</button></div></div>${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => `<div class="reply-card"><div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${currentUser && r.author === currentUser.username ? '(You)' : ''}</span><span style="font-size:0.75rem; color:var(--text-muted);">${r.date}</span></div><div style="font-size:0.9rem;">${r.text}</div></div>`).join('')}</div>` : ''}</div>`;
       });
       container.innerHTML = html;
     }
@@ -1502,12 +1641,16 @@
 
     function closeDmModal() { document.getElementById('dmModal').classList.remove('active'); }
 
-    function sendDirectMessage() {
+    async function sendDirectMessage() {
       const text = document.getElementById('dmMessageText').value.trim();
       if (!text) return;
-      messages.push({ from: currentUser.username, to: targetDmUser, text, date: new Date().toLocaleString() });
-      saveData();
-      updateInboxBadge();
+      const { collection, addDoc } = window.firebaseModules;
+      await addDoc(collection(window.db, "messages"), {
+        from: currentUser.username,
+        to: targetDmUser,
+        text,
+        date: new Date().toLocaleString()
+      });
       closeDmModal();
       alert("Message sent!");
     }
@@ -1520,7 +1663,6 @@
         list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
       } else {
         let html = '';
-        myMsgs.format = '';
         myMsgs.forEach(m => { html += `<div style="padding: 0.60rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;"><strong>From: ${m.from}</strong><p style="font-size:0.9rem; margin: 0.2rem 0;">${m.text}</p><span style="font-size: 0.75rem; color:var(--text-muted);">${m.date}</span></div>`; });
         list.innerHTML = html;
       }
@@ -1529,27 +1671,14 @@
 
     function closeInbox() { document.getElementById('inboxModal').classList.remove('active'); }
 
-    function saveData() {
-      localStorage.setItem('travel_posts', JSON.stringify(posts));
-      localStorage.setItem('travel_messages', JSON.stringify(messages));
-    }
-
-    // IP KONUMUNA GÖRE OTOMATİK DİL TESPİTİ
     async function detectUserLanguageByIP() {
       try {
         const response = await fetch('https://ipapi.co/json/');
         const data = await response.json();
         if (data && data.country_code) {
           const country = data.country_code;
-          // Rusya ve Ukrayna IP'leri için Rusça (RU)
-          if (country === 'RU' || country === 'UA') {
-            currentLang = 'RU';
-          } 
-          // Türkiye IP'si için Türkçe (TR) opsiyonel aktif edilebilir (İsteğe bağlı EN kalsın derseniz burayı atlayabilirsiniz)
-          else if (country === 'TR') {
-            currentLang = 'TR';
-          }
-          // Diğer tüm ülkeler varsayılan olarak EN kalır
+          if (country === 'RU' || country === 'UA') currentLang = 'RU';
+          else if (country === 'TR') currentLang = 'TR';
           document.getElementById('langLabel').innerText = currentLang;
           updateTexts();
           renderSidebar();
@@ -1560,18 +1689,6 @@
         console.log("IP geolocation fallback to default (EN)");
       }
     }
-
-    initAuth();
-    initMostPopularCity();
-    updateTexts();
-    renderSidebar();
-    renderPopularCities();
-    renderFeed();
-    renderLiveChat();
-    startAutoScroll();
-    
-    // IP Konum kontrolünü başlat
-    detectUserLanguageByIP();
   </script>
 </body>
 </html>
