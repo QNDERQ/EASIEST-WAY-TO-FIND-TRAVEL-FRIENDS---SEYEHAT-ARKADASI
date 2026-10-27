@@ -743,7 +743,6 @@
     let citiesData = {};
     let pendingCities = [];
 
-    // --- DÜNYADAKİ TÜM BAĞIMSIZ 195 ÜLKE (EKSİKSİZ LİSTE) ---
     const allWorldCountries = [
       "Afghanistan 🇦🇫", "Albania 🇦🇱", "Algeria 🇩🇿", "Andorra 🇦🇩", "Angola 🇦🇴", "Antigua and Barbuda 🇦🇬", "Argentina 🇦🇷", "Armenia 🇦🇲", "Australia 🇦🇺", "Austria 🇦🇹", "Azerbaijan 🇦🇿",
       "Bahamas 🇧🇸", "Bahrain 🇧🇭", "Bangladesh 🇧🇩", "Barbados 🇧🇧", "Belarus 🇧🇾", "Belgium 🇧🇪", "Belize 🇧🇿", "Benin 🇧🇯", "Bhutan 🇧🇹", "Bolivia 🇧🇴", "Bosnia and Herzegovina 🇧🇦", "Botswana 🇧🇼", "Brazil 🇧🇷", "Brunei 🇧🇳", "Bulgaria 🇧🇬", "Burkina Faso 🇧🇫", "Burundi 🇧🇮",
@@ -773,7 +772,7 @@
 
     const initialCitiesData = {
       "Thailand 🇹🇭": ["BANGKOK", "PHUKET", "PATTAYA", "KRABI", "CHIANG MAI"],
-      "Indonesia 🇮🇩": ["DENPASAR", "JAKARTA", "SURABAYA", "BANDUNG", "YOGYAKARTA", "MEDAN", "LOMBOK"],
+      "Indonesia 🇮🇩": ["BALI", "JAKARTA", "SURABAYA", "BANDUNG", "YOGYAKARTA", "MEDAN", "LOMBOK"],
       "Singapore 🇸🇬": ["SINGAPORE"],
       "China 🇨🇳": ["HONG KONG", "SHENZHEN", "GUANGZHOU", "SHANGHAI", "BEIJING", "CHENGDU", "HANGZHOU"],
       "United Kingdom 🇬🇧": ["LONDON", "EDINBURGH"],
@@ -848,6 +847,16 @@
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
+      // Bangkok ve diğer şehirler için özgün, tekrarsız ve kaliteli seyahat cümleleri
+      const uniqueBankokPosts = [
+        "Bangkok expat & traveler note #20. Sukhumvit and Asok area is extremely active this week. Let's connect!",
+        "Khaosan Road civarındayım, akşam sokak yemeklerini denemek ve biraz tur atmak isteyen var mı?",
+        "Anyone heading to Chatuchak Weekend Market tomorrow morning? Looking for company!",
+        "湄南河 (Chao Phraya) turu ve Wat Arun ziyareti için öğleden sonra 2-3 kişi arıyorum.",
+        "Bangkok'ta Rooftop bar akşamı planlıyoruz, katılmak isteyenler mesaj atabilir.",
+        "Bugün IconSiam tarafındayım. Akşam yemek ve nehir kenarı yürüyüşü için kimler geliyor?"
+      ];
+
       const multilangTexts = {
         en: [
           "Hey everyone! Currently staying in the city center. Anyone up for a coffee or dinner tonight?",
@@ -873,28 +882,35 @@
 
       const replyPool = {
         en: ["I'm down! Let me know where and when.", "Check out the old town area, totally worth it!", "Count me in for dinner!", "I was there yesterday, absolutely loved it."],
-        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmilisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
+        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmelisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
         ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
       };
 
-      const superPopular = ['BANGKOK', 'DENPASAR', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
+      const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
-        for (let i = 1; i <= 68; i++) {
+        const countLimit = (cityName === 'BANGKOK') ? uniqueBankokPosts.length : 15;
+        for (let i = 0; i < 45; i++) {
           const author = usernames[i % usernames.length];
           const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
-          const textList = multilangTexts[langKey];
-          const text = textList[i % textList.length] + ` (#${i} meet-up)`;
+          
+          let text = "";
+          if (cityName === 'BANGKOK' && i < uniqueBankokPosts.length) {
+            text = uniqueBankokPosts[i];
+          } else {
+            const textList = multilangTexts[langKey];
+            text = textList[i % textList.length] + ` (Meet-up #${i + 1})`;
+          }
           
           posts.push({
             id: idCounter++,
             city: cityName,
             text: text,
             author: author,
-            date: `2026-10-${String(Math.max(1, 29 - Math.floor(i / 3))).padStart(2, '0')}`,
+            date: `2026-10-${String(Math.max(1, 29 - Math.floor(i / 2))).padStart(2, '0')}`,
             replies: [
-              { id: idCounter++, author: usernames[(i + 5) % usernames.length], text: replyPool[langKey][0], date: `2026-10-25` },
-              { id: idCounter++, author: usernames[(i + 9) % usernames.length], text: replyPool[langKey][1], date: `2026-10-26` }
+              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: `2026-10-25` },
+              { id: idCounter++, author: usernames[(i + 7) % usernames.length], text: replyPool[langKey][1], date: `2026-10-26` }
             ]
           });
         }
@@ -1189,7 +1205,7 @@
         renderPopularCities();
       });
 
-      // 2. Gönderileri Kontrol Et ve Eksikleri Tamamla
+      // 2. Gönderileri Kontrol Et ve Temizlenmiş Paketleri Yükle
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
@@ -1198,7 +1214,7 @@
         existingTexts.add(docSnap.data().text);
       });
 
-      if (postsSnapshot.size < 350) {
+      if (postsSnapshot.size < 300) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
           if (!existingTexts.has(p.text)) {
@@ -1530,7 +1546,6 @@
       }
     }, 30);
 
-    // --- CANLI SOHBETTE KULLANICI ADINA TIKLAYIP DM ATMA ÖZELLİĞİ ---
     function renderLiveChat() {
       const container = document.getElementById('chatMessagesContainer');
       if (!container) return;
