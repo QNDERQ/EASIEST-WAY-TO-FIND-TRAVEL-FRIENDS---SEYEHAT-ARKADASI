@@ -1,0 +1,1577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Friend - Travel Companion & Forum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-slate: #f8fafc;
+      --card-bg: #ffffff;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-slate);
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .auth-buttons {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .btn-auth {
+      background: #eff6ff;
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      padding: 0.4rem 0.9rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-auth:hover { background: #dbeafe; }
+    .btn-auth-primary {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-auth-primary:hover { background: var(--primary-hover); }
+
+    .lang-dropdown-wrapper { position: relative; }
+
+    .lang-btn, .dm-inbox-btn, .admin-panel-btn {
+      background: #f1f5f9;
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s;
+    }
+
+    .lang-btn { display: flex; }
+    .dm-inbox-btn { display: flex; }
+
+    .lang-btn:hover, .dm-inbox-btn:hover, .admin-panel-btn:hover { background: #e2e8f0; }
+    .admin-panel-btn { background: #fef3c7; color: #d97706; border-color: #fde68a; }
+
+    .lang-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 110%;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      width: 140px;
+      z-index: 200;
+      overflow: hidden;
+    }
+
+    .lang-menu.active { display: block; }
+
+    .lang-option {
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.15s;
+    }
+
+    .lang-option:hover { background: #eff6ff; color: var(--primary); }
+
+    .container {
+      display: flex;
+      flex: 1;
+      max-width: 1300px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    aside {
+      width: 330px;
+      background: #ffffff;
+      border-right: 1px solid var(--border-color);
+      padding: 1.5rem;
+      height: calc(100vh - 65px);
+      position: sticky;
+      top: 65px;
+      overflow-y: auto;
+    }
+
+    .search-box {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem 1rem 0.75rem 2.4rem;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      outline: none;
+      font-family: inherit;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 0.8rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+    }
+
+    .custom-city-btn {
+      width: 100%;
+      padding: 0.65rem;
+      background: #eff6ff;
+      color: var(--primary);
+      border: 1px dashed var(--primary);
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 1.5rem;
+      transition: background 0.2s;
+    }
+    .custom-city-btn:hover { background: #dbeafe; }
+
+    .category-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin: 1.2rem 0 0.5rem 0;
+      letter-spacing: 0.5px;
+    }
+
+    .city-list { list-style: none; }
+
+    .city-item {
+      padding: 0.6rem 0.8rem;
+      border-radius: 6px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.95rem;
+      transition: background 0.15s;
+      text-transform: uppercase;
+      font-weight: 500;
+      color: var(--text-dark);
+    }
+
+    .city-item:hover, .city-item.active {
+      background: #eff6ff;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .city-actions-admin { display: flex; gap: 5px; }
+
+    .btn-city-del, .btn-city-edit {
+      background: none; border: none; cursor: pointer; font-size: 0.8rem; padding: 2px 5px; border-radius: 4px;
+    }
+    .btn-city-del { color: #ef4444; }
+    .btn-city-del:hover { background: #fee2e2; }
+    .btn-city-edit { color: #f59e0b; }
+    .btn-city-edit:hover { background: #fef3c7; }
+
+    .city-count {
+      font-size: 0.8rem;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    main {
+      flex: 1;
+      padding: 2rem;
+      max-width: 800px;
+    }
+
+    .header-banner {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      padding: 1.8rem;
+      border-radius: 16px;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.25);
+    }
+
+    .header-banner h1 { font-size: 1.6rem; margin-bottom: 0.4rem; }
+    .header-banner p { opacity: 0.9; font-size: 0.95rem; }
+
+    .popular-section {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem 1.2rem;
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+
+    .popular-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      margin-bottom: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .popular-cards {
+      display: flex;
+      gap: 0.8rem;
+      overflow-x: auto;
+      scroll-behavior: smooth;
+      -webkit-overflow-scrolling: touch;
+      padding-bottom: 0.3rem;
+    }
+
+    .popular-cards::-webkit-scrollbar { display: none; }
+
+    .popular-card {
+      flex: 0 0 auto;
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      padding: 0.55rem 1rem;
+      border-radius: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      transition: all 0.2s;
+      text-transform: uppercase;
+    }
+
+    .popular-card:hover {
+      border-color: var(--primary);
+      color: var(--primary);
+      background: #eff6ff;
+      transform: translateY(-2px);
+    }
+
+    .popular-badge {
+      background: #fef3c7;
+      color: #d97706;
+      font-size: 0.75rem;
+      padding: 2px 7px;
+      border-radius: 10px;
+      font-weight: 700;
+    }
+
+    .live-chat-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+    }
+    .chat-messages-container {
+      height: 200px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.8rem;
+      background: #f8fafc;
+      margin-bottom: 0.8rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .chat-msg-item {
+      font-size: 0.9rem;
+      padding: 0.4rem 0.6rem;
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+    }
+    .chat-msg-item span { font-weight: 700; color: var(--primary); }
+
+    .chat-input-area { display: flex; gap: 0.5rem; }
+    .chat-input-area input {
+      flex: 1;
+      padding: 0.6rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .post-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 2rem;
+    }
+
+    .post-box textarea {
+      width: 100%;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.8rem;
+      font-family: inherit;
+      resize: vertical;
+      min-height: 80px;
+      outline: none;
+      margin-bottom: 0.8rem;
+    }
+
+    .post-box-actions {
+      display: flex;
+      gap: 0.8rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-submit {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-left: auto;
+      transition: background 0.2s;
+    }
+    .btn-submit:hover { background: var(--primary-hover); }
+
+    .feed-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .post-card {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .post-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+    .author-info { display: flex; align-items: center; gap: 0.6rem; }
+    .author-name { font-weight: 700; font-size: 0.95rem; }
+
+    .post-content {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+      white-space: pre-wrap;
+    }
+
+    .post-footer {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      border-top: 1px solid var(--border-color);
+      padding-top: 0.8rem;
+    }
+
+    .btn-reply, .btn-dm {
+      border: none;
+      padding: 0.4rem 0.8rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .btn-reply { background: #f1f5f9; color: #334155; }
+    .btn-reply:hover { background: #e2e8f0; }
+    .btn-dm { background: #eff6ff; color: var(--primary); }
+    .btn-dm:hover { background: #dbeafe; }
+    .btn-dm.disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+
+    .replies-container {
+      margin-top: 1rem;
+      padding-left: 1.2rem;
+      border-left: 2px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+
+    .reply-card {
+      background: #f8fafc;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 0.8rem 1rem;
+    }
+
+    .reply-form {
+      display: none;
+      margin-top: 0.8rem;
+      padding: 0.8rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .reply-form.active { display: block; }
+    .reply-form textarea {
+      width: 100%; padding: 0.5rem; border: 1px solid var(--border-color); border-radius: 6px;
+      font-family: inherit; resize: vertical; min-height: 60px; margin-bottom: 0.5rem;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+    .modal.active { display: flex; }
+    .modal-content {
+      background: #fff; padding: 1.8rem; border-radius: 12px; width: 440px; max-width: 90%;
+    }
+    .modal-content h3 { margin-bottom: 1rem; }
+    .modal-content select, .modal-content input, .modal-content textarea {
+      width: 100%; padding: 0.6rem; margin-bottom: 0.8rem;
+      border: 1px solid var(--border-color); border-radius: 6px; font-family: inherit;
+    }
+    .modal-actions { display: flex; justify-content: flex-end; gap: 0.5rem; }
+    .modal-close { background: #e2e8f0; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; }
+
+    @media(max-width: 768px) {
+      .container { flex-direction: column; }
+      aside { width: 100%; height: auto; position: static; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo" onclick="initMostPopularCity()">
+      <i class="fa-solid fa-compass"></i> Travel Friend
+    </div>
+    <div class="header-actions">
+      <div id="authUserArea" class="auth-buttons"></div>
+
+      <button class="admin-panel-btn" id="adminPanelBtn" onclick="openAdminModal()">
+        <i class="fa-solid fa-shield-halved"></i> <span id="adminPanelText">Approval Panel</span> (<span id="pendingCount">0</span>)
+      </button>
+
+      <button class="dm-inbox-btn" id="inboxBtn" onclick="openInbox()" style="display:none;">
+        <i class="fa-solid fa-envelope"></i> <span id="inboxText">Messages</span> (<span id="inboxCount">0</span>)
+      </button>
+
+      <div class="lang-dropdown-wrapper">
+        <button class="lang-btn" onclick="toggleLangMenu()">
+          <i class="fa-solid fa-globe"></i> <span id="langLabel">EN</span> <i class="fa-solid fa-chevron-down" style="font-size: 0.75rem;"></i>
+        </button>
+        <div class="lang-menu" id="langMenu">
+          <div class="lang-option" onclick="selectLanguage('EN')">🇬🇧 English</div>
+          <div class="lang-option" onclick="selectLanguage('RU')">🇷🇺 Русский</div>
+          <div class="lang-option" onclick="selectLanguage('TR')">🇹🇷 Türkçe</div>
+          <div class="lang-option" onclick="selectLanguage('ES')">🇪🇸 Español</div>
+          <div class="lang-option" onclick="selectLanguage('HI')">🇮🇳 हिन्दी</div>
+          <div class="lang-option" onclick="selectLanguage('ZH')">🇨🇳 中文</div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div class="container">
+    <aside>
+      <div class="search-box">
+        <i class="fa-solid fa-search"></i>
+        <input type="text" id="citySearchInput" oninput="filterCityList()" placeholder="Search country or city...">
+      </div>
+      <button class="custom-city-btn" onclick="openAddCityModal()" id="customCityBtnText">+ Add Custom City</button>
+
+      <div id="sidebarCityListContainer"></div>
+    </aside>
+
+    <main>
+      <div class="header-banner">
+        <h1 id="bannerTitle">Find Travel Friends, Share Tips!</h1>
+        <p id="bannerDesc">Connect instantly with travelers worldwide.</p>
+      </div>
+
+      <div class="popular-section">
+        <div class="popular-title">
+          <i class="fa-solid fa-fire text-orange-500" style="color:#f59e0b;"></i> <span id="popularTitleText">Popular Cities</span>
+        </div>
+        <div class="popular-cards" id="popularCardsContainer"></div>
+      </div>
+
+      <div class="live-chat-box">
+        <div class="popular-title" style="margin-bottom:0.8rem;">
+          <i class="fa-solid fa-comments" style="color:var(--primary);"></i> 
+          <span id="liveChatTitle">Global Travel Chat Room</span>
+        </div>
+        <div class="chat-messages-container" id="chatMessagesContainer"></div>
+        <div class="chat-input-area">
+          <input type="text" id="chatInputMessage" placeholder="Type a message to global chat..." onkeypress="handleChatKeyPress(event)">
+          <button class="btn-submit" id="chatSendBtn" style="margin:0; padding: 0.5rem 1rem;" onclick="sendLiveChatMessage()">Send</button>
+        </div>
+      </div>
+
+      <div class="post-box">
+        <textarea id="postText" placeholder="Write a tip, question or travel plan..."></textarea>
+        <div class="post-box-actions">
+          <button class="btn-submit" onclick="createNewPost()" id="postSubmitBtn">Post</button>
+        </div>
+      </div>
+
+      <div class="feed-header">
+        <h2 id="currentFeedTitle">Posts</h2>
+        <span id="postCountBadge" class="city-count">0 posts</span>
+      </div>
+      <div id="postsFeedContainer"></div>
+    </main>
+  </div>
+
+  <!-- Modallar -->
+  <div class="modal" id="addCityModal">
+    <div class="modal-content">
+      <h3 id="addCityModalTitle">Add New City</h3>
+      <label style="font-size:0.85rem; color:var(--text-muted);" id="selectCountryLabel">Select Country:</label>
+      <select id="modalCountrySelect" style="max-height: 150px;"></select>
+      <label style="font-size:0.85rem; color:var(--text-muted);" id="cityNameLabel">City Name:</label>
+      <input type="text" id="modalCityNameInput" placeholder="Ex: STOCKHOLM" style="text-transform:uppercase;">
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeAddCityModal()" id="cancelCityBtnText">Cancel</button>
+        <button class="btn-submit" onclick="submitNewCity()" id="saveCityBtnText">Add</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="editCityModal">
+    <div class="modal-content">
+      <h3 id="editModalTitle">Edit City Name</h3>
+      <input type="text" id="editCityNameInput" style="text-transform:uppercase;">
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeEditCityModal()" id="editCancelBtn">Cancel</button>
+        <button class="btn-submit" onclick="saveEditedCity()" id="editSaveBtn">Update</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="adminModal">
+    <div class="modal-content" style="width: 500px;">
+      <h3 id="adminModalTitle">Moderator Approval Panel</h3>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 1rem;" id="adminModalDesc">Pending cities submitted by users:</p>
+      <div id="pendingCitiesList" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;"></div>
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeAdminModal()" id="adminCloseBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="loginModal">
+    <div class="modal-content">
+      <h3 id="loginModalTitle">Log In</h3>
+      <input type="email" id="loginEmail" placeholder="Email or username">
+      <input type="password" id="loginPassword" placeholder="Password">
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeAuthModals()" id="cancelLoginBtnText">Cancel</button>
+        <button class="btn-submit" onclick="handleLogin()" id="submitLoginBtnText">Log In</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="registerModal">
+    <div class="modal-content">
+      <h3 id="regModalTitle">Register</h3>
+      <div style="display:flex; gap:0.4rem;">
+        <input type="text" id="regUsername" placeholder="Username" style="flex:1;">
+        <button type="button" class="btn-auth" onclick="suggestUsername()" style="font-size:0.8rem; margin-bottom:0.8rem;" id="suggestBtnText">💡 Suggest</button>
+      </div>
+      <input type="email" id="regEmail" placeholder="Email Address">
+      <input type="password" id="regPassword" placeholder="Password">
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeAuthModals()" id="cancelRegBtnText">Cancel</button>
+        <button class="btn-submit" onclick="handleRegister()" id="submitRegBtnText">Register</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="dmModal">
+    <div class="modal-content">
+      <h3 id="dmModalTitle">Send Direct Message</h3>
+      <p id="dmTargetUser" style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.9rem;"></p>
+      <textarea id="dmMessageText" placeholder="Type your message..."></textarea>
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeDmModal()" id="cancelBtnText">Cancel</button>
+        <button class="btn-submit" onclick="sendDirectMessage()" id="sendBtnText">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal" id="inboxModal">
+    <div class="modal-content" style="width: 500px;">
+      <h3 id="inboxModalTitle">Inbox Messages</h3>
+      <div id="inboxMessagesList" style="max-height: 300px; overflow-y: auto; margin-bottom: 1rem;"></div>
+      <div class="modal-actions">
+        <button class="modal-close" onclick="closeInbox()" id="closeInboxBtn">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // VARSAYILAN DİL İNGİLİZCE (EN)
+    let currentLang = 'EN';
+    let selectedCity = 'BANGKOK';
+    let currentUser = null;
+    let targetDmUser = '';
+    let editingCityInfo = { country: '', oldName: '' };
+
+    const allWorldCountries = [
+      "Albania 🇦🇱", "Argentina 🇦🇷", "Australia 🇦🇺", "Austria 🇦🇹", "Azerbaijan 🇦🇿",
+      "Belgium 🇧🇪", "Bosnia and Herzegovina 🇧🇦", "Brazil 🇧🇷", "Bulgaria 🇧🇬", "Cambodia 🇰🇭", 
+      "Canada 🇨🇦", "China 🇨🇳", "Croatia 🇭🇷", "Czech Republic 🇨🇿", "Denmark 🇩🇰", 
+      "Dominican Republic 🇩🇴", "Egypt 🇪🇬", "Estonia 🇪🇪", "France 🇫🇷", "Georgia 🇬🇪", 
+      "Germany 🇩🇪", "Greece 🇬🇷", "Hong Kong 🇭🇰", "Hungary 🇭🇺", "India 🇮🇳", 
+      "Indonesia 🇮🇩", "Ireland 🇮🇪", "Israel 🇮🇱", "Italy 🇮🇹", "Japan 🇯🇵", 
+      "Kosovo 🇽🇰", "Macau 🇲🇴", "Malaysia 🇲🇾", "Mexico 🇲🇽", "Montenegro 🇲🇪", 
+      "Morocco 🇲🇦", "Netherlands 🇳🇱", "New Zealand 🇳🇿", "North Macedonia 🇲🇰", "Peru 🇵🇪", 
+      "Philippines 🇵🇭", "Poland 🇵🇱", "Portugal 🇵🇹", "Qatar 🇶🇦", "Romania 🇷🇴", 
+      "Russia 🇷🇺", "Saudi Arabia 🇸🇦", "Serbia 🇷🇸", "Singapore 🇸🇬", "Slovenia 🇸🇮", 
+      "South Africa 🇿🇦", "South Korea 🇰🇷", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sweden 🇸🇪", 
+      "Switzerland 🇨🇭", "Taiwan 🇹🇼", "Thailand 🇹🇭", "Turkey 🇹🇷", "Ukraine 🇺🇦", 
+      "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Vietnam 🇻🇳"
+    ];
+
+    const initialCitiesData = {
+      "Thailand 🇹🇭": ["BANGKOK", "PHUKET", "PATTAYA", "KRABI", "CHIANG MAI"],
+      "China 🇨🇳": ["HONG KONG", "SHENZHEN", "GUANGZHOU", "SHANGHAI", "BEIJING", "CHENGDU", "HANGZHOU"],
+      "United Kingdom 🇬🇧": ["LONDON", "EDINBURGH"],
+      "Macau 🇲🇴": ["MACAU"],
+      "Turkey 🇹🇷": ["ISTANBUL", "ANTALYA", "MUGLA", "EDIRNE"],
+      "United Arab Emirates 🇦🇪": ["DUBAI", "ABU DHABI"],
+      "Saudi Arabia 🇸🇦": ["MECCA", "JEDDAH", "RIYADH"],
+      "France 🇫🇷": ["PARIS", "NICE", "LYON"],
+      "Malaysia 🇲🇾": ["KUALA LUMPUR", "JOHOR BAHRU"],
+      "Singapore 🇸🇬": ["SINGAPORE"],
+      "United States 🇺🇸": ["NEW YORK", "LAS VEGAS", "MIAMI", "LOS ANGELES", "SAN FRANCISCO", "ORLANDO", "HONOLULU"],
+      "Italy 🇮🇹": ["ROME", "MILAN", "VENICE", "FLORENCE"],
+      "Japan 🇯🇵": ["TOKYO", "OSAKA", "KYOTO"],
+      "Taiwan 🇹🇼": ["TAIPEI", "TAICHUNG"],
+      "Czech Republic 🇨🇿": ["PRAGUE"],
+      "Spain 🇪🇸": ["BARCELONA", "MADRID", "SEVILLE"],
+      "South Korea 🇰🇷": ["SEOUL"],
+      "Hungary 🇭🇺": ["BUDAPEST"],
+      "Austria 🇦🇹": ["VIENNA"],
+      "Netherlands 🇳🇱": ["AMSTERDAM"],
+      "Vietnam 🇻🇳": ["HO CHI MINH CITY", "HANOI", "HOI AN"],
+      "Indonesia 🇮🇩": ["DENPASAR", "JAKARTA"],
+      "Germany 🇩🇪": ["BERLIN", "MUNICH", "FRANKFURT"],
+      "Egypt 🇪🇬": ["CAIRO", "SHARM EL SHEIKH"],
+      "Poland 🇵🇱": ["WARSAW", "KRAKOW"],
+      "Ireland 🇮🇪": ["DUBLIN"],
+      "India 🇮🇳": ["DELHI", "MUMBAI", "CHENNAI"],
+      "Australia 🇦🇺": ["SYDNEY", "MELBOURNE"],
+      "Portugal 🇵🇹": ["LISBON", "PORTO"],
+      "Denmark 🇩🇰": ["COPENHAGEN"],
+      "Argentina 🇦🇷": ["BUENOS AIRES"],
+      "Peru 🇵🇪": ["LIMA"],
+      "South Africa 🇿🇦": ["JOHANNESBURG"],
+      "Belgium 🇧🇪": ["BRUSSELS"],
+      "Switzerland 🇨🇭": ["ZURICH"],
+      "Sweden 🇸🇪": ["STOCKHOLM"],
+      "Brazil 🇧🇷": ["RIO DE JANEIRO", "SAO PAULO"],
+      "Canada 🇨🇦": ["TORONTO", "VANCOUVER"],
+      "Morocco 🇲🇦": ["MARRAKECH", "CASABLANCA"],
+      "Greece 🇬🇷": ["ATHENS"],
+      "Qatar 🇶🇦": ["DOHA"],
+      "Dominican Republic 🇩🇴": ["PUNTA CANA"],
+      "Mexico 🇲🇽": ["CANCUN", "MEXICO CITY"],
+      "Cambodia 🇰🇭": ["SIEM REAP"],
+      "New Zealand 🇳🇿": ["AUCKLAND"],
+      "Israel 🇮🇱": ["TEL AVIV"],
+      "Estonia 🇪🇪": ["TALLINN"],
+      "Sri Lanka 🇱🇰": ["COLOMBO"],
+      "Georgia 🇬🇪": ["TBILISI", "BATUMI"],
+      "Azerbaijan 🇦🇿": ["BAKU"],
+      "Russia 🇷🇺": ["MOSCOW", "SAINT PETERSBURG", "KAZAN", "SOCHI"],
+      "Ukraine 🇺🇦": ["KYIV", "ODESA", "LVIV"],
+      "Serbia 🇷🇸": ["BELGRADE"],
+      "Bosnia and Herzegovina 🇧🇦": ["SARAJEVO", "MOSTAR"],
+      "Albania 🇦🇱": ["TIRANA"],
+      "North Macedonia 🇲🇰": ["SKOPJE", "OHRID"],
+      "Montenegro 🇲🇪": ["KOTOR", "PODGORICA"],
+      "Bulgaria 🇧🇬": ["SOFIA", "PLOVDIV"],
+      "Croatia 🇭🇷": ["DUBROVNIK", "ZAGREB", "SPLIT"],
+      "Romania 🇷🇴": ["BUCHAREST", "BRASOV"],
+      "Kosovo 🇽🇰": ["PRISTINA"],
+      "Slovenia 🇸🇮": ["LJUBLJANA"]
+    };
+
+    let citiesData = JSON.parse(localStorage.getItem('travel_cities_data_en')) || initialCitiesData;
+    let pendingCities = JSON.parse(localStorage.getItem('travel_pending_cities')) || [];
+    let liveChatMessages = JSON.parse(localStorage.getItem('travel_live_chat')) || [];
+
+    const dict = {
+      EN: {
+        search: "Search country or city...",
+        addCustom: "+ Add Custom City",
+        bannerTitle: "Find Travel Friends, Share Tips!",
+        bannerDesc: "Connect instantly with travelers worldwide.",
+        postPlaceholder: "Write a tip, question or travel plan...",
+        submitBtn: "Post",
+        popularTitle: "Popular Cities",
+        postCount: "posts",
+        dmBtn: "Message",
+        replyBtn: "Reply",
+        inbox: "Messages",
+        adminPanel: "Approval Panel",
+        liveChatTitle: "Global Travel Chat Room",
+        chatPlaceholder: "Type a message to global chat...",
+        send: "Send",
+        login: "Log In",
+        register: "Register",
+        logout: "Log Out",
+        suggest: "💡 Suggest",
+        cancel: "Cancel",
+        close: "Close",
+        save: "Save",
+        update: "Update",
+        posts: "Posts"
+      },
+      RU: {
+        search: "Поиск страны или города...",
+        addCustom: "+ Добавить город",
+        bannerTitle: "Найди попутчика, делись советами!",
+        bannerDesc: "Общайтесь с путешественниками по всему миру.",
+        postPlaceholder: "Напишите совет, вопрос или план поездки...",
+        submitBtn: "Опубликовать",
+        popularTitle: "Популярные города",
+        postCount: "постов",
+        dmBtn: "Сообщение",
+        replyBtn: "Ответить",
+        inbox: "Сообщения",
+        adminPanel: "Панель модерации",
+        liveChatTitle: "Общий чат путешественников",
+        chatPlaceholder: "Напишите в общий чат...",
+        send: "Отправить",
+        login: "Войти",
+        register: "Регистрация",
+        logout: "Выйти",
+        suggest: "💡 Идея",
+        cancel: "Отмена",
+        close: "Закрыть",
+        save: "Сохранить",
+        update: "Обновить",
+        posts: "Публикации"
+      },
+      TR: {
+        search: "Ülke veya Şehir ara...",
+        addCustom: "+ Kendi Şehrini Ekle",
+        bannerTitle: "Seyahat Arkadaşını Bul, İpuçlarını Paylaş!",
+        bannerDesc: "Dünyadaki tüm ülkelerdeki gezginlerle anında bağlantı kur.",
+        postPlaceholder: "Bu şehir hakkında ipucu, soru veya seyahat planını yaz...",
+        submitBtn: "Paylaş",
+        popularTitle: "Popüler Şehirler",
+        postCount: "yazı",
+        dmBtn: "Mesaj At",
+        replyBtn: "Cevap Ver",
+        inbox: "Mesajlar",
+        adminPanel: "Onay Paneli",
+        liveChatTitle: "Genel Seyahat Sohbet Odası",
+        chatPlaceholder: "Genel sohbet odasına mesaj yaz...",
+        send: "Gönder",
+        login: "Giriş Yap",
+        register: "Kayıt Ol",
+        logout: "Çıkış",
+        suggest: "💡 Öner",
+        cancel: "İptal",
+        close: "Kapat",
+        save: "Kaydet",
+        update: "Güncelle",
+        posts: "Paylaşımlar"
+      },
+      ES: {
+        search: "Buscar país o ciudad...",
+        addCustom: "+ Agregar Ciudad",
+        bannerTitle: "¡Encuentra compañeros y comparte tips!",
+        bannerDesc: "Conéctate al instante con viajeros de todo el mundo.",
+        postPlaceholder: "Escribe un consejo, pregunta o plan de viaje...",
+        submitBtn: "Publicar",
+        popularTitle: "Ciudades Populares",
+        postCount: "publicaciones",
+        dmBtn: "Mensaje",
+        replyBtn: "Responder",
+        inbox: "Mensajes",
+        adminPanel: "Panel de Aprobación",
+        liveChatTitle: "Sala de Chat Global",
+        chatPlaceholder: "Escribe un mensaje...",
+        send: "Enviar",
+        login: "Iniciar Sesión",
+        register: "Registrarse",
+        logout: "Cerrar Sesión",
+        suggest: "💡 Sugerir",
+        cancel: "Cancelar",
+        close: "Cerrar",
+        save: "Guardar",
+        update: "Actualizar",
+        posts: "Publicaciones"
+      },
+      HI: {
+        search: "देश या शहर खोजें...",
+        addCustom: "+ अपना शहर जोड़ें",
+        bannerTitle: "यात्रा साथी खोजें, सुझाव साझा करें!",
+        bannerDesc: "दुनिया भर के यात्रियों से तुरंत जुड़ें।",
+        postPlaceholder: "इस शहर के बारे में सुझाव या योजना लिखें...",
+        submitBtn: "पोस्ट करें",
+        popularTitle: "लोकप्रिय शहर",
+        postCount: "पोस्ट",
+        dmBtn: "संदेश",
+        replyBtn: "उत्तर दें",
+        inbox: "संदेश",
+        adminPanel: "अनुమోदन पैनल",
+        liveChatTitle: "वैश्विक यात्रा चैट",
+        chatPlaceholder: "चैट में संदेश लिखें...",
+        send: "भेजें",
+        login: "लॉग इन",
+        register: "पंजीकरण",
+        logout: "लॉग आउट",
+        suggest: "💡 सुझाव",
+        cancel: "रद्द करें",
+        close: "बंद करें",
+        save: "सहेजें",
+        update: "अपडेट करें",
+        posts: "पोस्ट"
+      },
+      ZH: {
+        search: "搜索国家或城市...",
+        addCustom: "+ 添加自定义城市",
+        bannerTitle: "寻找旅行伙伴，分享攻略！",
+        bannerDesc: "立即与全球旅行者建立联系。",
+        postPlaceholder: "写下关于这个城市的贴士、问题或计划...",
+        submitBtn: "发布",
+        popularTitle: "热门城市",
+        postCount: "条动态",
+        dmBtn: "私信",
+        replyBtn: "回复",
+        inbox: "消息",
+        adminPanel: "审核面板",
+        liveChatTitle: "全球旅行聊天室",
+        chatPlaceholder: "在公共聊天室发送消息...",
+        send: "发送",
+        login: "登录",
+        register: "注册",
+        logout: "登出",
+        suggest: "💡 推荐",
+        cancel: "取消",
+        close: "关闭",
+        save: "保存",
+        update: "更新",
+        posts: "动态"
+      }
+    };
+
+    function generateRichForumPosts() {
+      const posts = [];
+      let idCounter = 1000;
+
+      const usernames = [
+        "travel_bug92", "caner_travels", "nomad_kris", "katya_spb", "santiago_go", 
+        "phuket_surfer", "mert_bkk", "ozlem_explorer", "tom_globe", "serkan_istanbul",
+        "elena_nomad", "alex_uk", "jake_surf_co", "selin_bali", "oleg_bali", "claire_travels",
+        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r"
+      ];
+
+      const replyTexts = [
+        "Thanks for the tip! Will definitely check it out.",
+        "Aynen katılıyorum, kesinlikle görülmesi gereken bir yer!",
+        "Do you have any cafe recommendations nearby?",
+        "Harika bir paylaşım, teşekkürler!",
+        "Is it better to visit during daytime or evening?",
+        "I was there last week, totally worth it!"
+      ];
+
+      for (let i = 1; i <= 35; i++) {
+        const author = usernames[i % usernames.length];
+        const day = String(Math.max(1, 28 - Math.floor(i / 1.5))).padStart(2, '0');
+        posts.push({
+          id: idCounter++,
+          city: 'BANGKOK',
+          text: i === 1 ? "Arrived in Bangkok yesterday and stayed around Sukhumvit. Street food at Soi 38 is top tier! Anyone up for a night market walk tonight?" : 
+                i === 2 ? "Bangkok'a ilk defa gelecekler: Havaalanında alt kattan Airport Rail Link trenine binin, taksi yerine çok ekonomik." :
+                `Bangkok expat & traveler note #${i}. Sukhumvit and Asok area is extremely active this week. Let's connect!`,
+          author: author,
+          date: `2026-10-${day}`,
+          replies: i === 1 ? [
+            { id: idCounter++, author: 'caner_travels', text: "Hey! I'm staying near BTS Asok. Let's grab a beer around 8 PM.", date: `2026-10-${day}` },
+            { id: idCounter++, author: 'nomad_kris', text: "I'm in for Jodd Fairs too!", date: `2026-10-${day}` }
+          ] : []
+        });
+      }
+
+      for (let i = 1; i <= 30; i++) {
+        const day = String(Math.max(1, 27 - Math.floor(i / 1.2))).padStart(2, '0');
+        posts.push({
+          id: idCounter++,
+          city: 'DENPASAR',
+          text: i === 1 ? "Canggu traffic is getting insane around Batu Bolong, but cafes and sunset vibe are totally worth it." : 
+                `Bali nomad update #${i}. Scooter rental is a must around Canggu and Ubud. Great coworking spaces everywhere.`,
+          author: usernames[(i + 2) % usernames.length],
+          date: `2026-10-${day}`,
+          replies: i === 1 ? [{ id: idCounter++, author: 'santiago_go', text: "Echo beach surf session tomorrow morning?", date: `2026-10-${day}` }] : []
+        });
+      }
+
+      for (let i = 1; i <= 22; i++) {
+        const day = String(Math.max(1, 25 - i)).padStart(2, '0');
+        posts.push({
+          id: idCounter++,
+          city: 'TOKYO',
+          text: `Tokyo exploration log #${i}. Suica card on Apple Wallet is a lifesaver for trains and 7-Eleven convenience stores.`,
+          author: usernames[(i + 4) % usernames.length],
+          date: `2026-10-${day}`,
+          replies: []
+        });
+      }
+
+      for (let i = 1; i <= 18; i++) {
+        const day = String(Math.max(1, 24 - i)).padStart(2, '0');
+        posts.push({
+          id: idCounter++,
+          city: 'LISBON',
+          text: `Lisbon city tip #${i}. Wear comfortable sneakers for Alfama hills and ride Tram 28!`,
+          author: usernames[(i + 1) % usernames.length],
+          date: `2026-10-${day}`,
+          replies: []
+        });
+      }
+
+      let cityIndex = 0;
+      for (const [country, cityList] of Object.entries(initialCitiesData)) {
+        cityList.forEach((cityName) => {
+          if (!['BANGKOK', 'DENPASAR', 'TOKYO', 'LISBON'].includes(cityName)) {
+            const targetCount = (cityIndex % 4) + 1; 
+
+            for (let k = 1; k <= targetCount; k++) {
+              const author = usernames[(cityIndex + k) % usernames.length];
+              const replyAuthor = usernames[(cityIndex + k + 3) % usernames.length];
+              const hasReply = k === 1 || targetCount > 2;
+
+              posts.push({
+                id: idCounter++,
+                city: cityName,
+                text: k === 1 ? `📍 Exploring ${cityName}! Great atmosphere, amazing food culture, and very friendly locals.` :
+                      k === 2 ? `${cityName} gezi tavsiyesi: Şehir merkezinde yürüyerek gezmek en doğrusu, ara sokaklar harika fotoğraf noktaları veriyor.` :
+                      k === 3 ? `Best spots for local coffee and sunset view in ${cityName}? Any recommendations?` :
+                      `Just arrived in ${cityName}! Weather is perfect and staying near the city center.`,
+                author: author,
+                date: `2026-10-${25 - (k * 2)}`,
+                replies: hasReply ? [
+                  {
+                    id: idCounter++,
+                    author: replyAuthor,
+                    text: replyTexts[(cityIndex + k) % replyTexts.length],
+                    date: `2026-10-${24 - (k * 2)}`
+                  }
+                ] : []
+              });
+            }
+            cityIndex++;
+          }
+        });
+      }
+
+      return posts;
+    }
+
+    const CURRENT_DATA_VERSION = 'v11_ip_geolocation_en';
+    if (localStorage.getItem('travel_data_version') !== CURRENT_DATA_VERSION) {
+      localStorage.removeItem('travel_posts');
+      localStorage.removeItem('travel_cities_data_en');
+      localStorage.setItem('travel_data_version', CURRENT_DATA_VERSION);
+    }
+
+    let posts = JSON.parse(localStorage.getItem('travel_posts')) || generateRichForumPosts();
+    let messages = JSON.parse(localStorage.getItem('travel_messages')) || [];
+    let users = JSON.parse(localStorage.getItem('travel_users')) || [
+      { username: 'admin', email: 'admin@admin.com', password: '188199', isAdmin: true },
+      { username: 'caner_travels', email: 'caner@example.com', password: '123', isAdmin: false }
+    ];
+
+    function transliterateToLatin(text) {
+      const cyrillicMap = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y',
+        'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
+        'х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
+      };
+      let clean = text.toLowerCase().trim();
+      let result = '';
+      for (let i = 0; i < clean.length; i++) {
+        result += cyrillicMap[clean[i]] !== undefined ? cyrillicMap[clean[i]] : clean[i];
+      }
+      return result.replace(/i/g, 'I').replace(/ı/g, 'I').replace(/ş/g, 'S').replace(/ğ/g, 'G').replace(/ü/g, 'U').replace(/ö/g, 'O').replace(/ç/g, 'C').toUpperCase();
+    }
+
+    function toggleLangMenu() { document.getElementById('langMenu').classList.toggle('active'); }
+    
+    function selectLanguage(lang) {
+      currentLang = lang;
+      document.getElementById('langLabel').innerText = lang;
+      document.getElementById('langMenu').classList.remove('active');
+      updateTexts();
+      renderSidebar();
+      renderPopularCities();
+      renderFeed();
+      renderAuthArea();
+      renderLiveChat();
+    }
+
+    window.addEventListener('click', function(e) {
+      if (!e.target.closest('.lang-dropdown-wrapper')) {
+        const menu = document.getElementById('langMenu');
+        if (menu) menu.classList.remove('active');
+      }
+    });
+
+    function initAuth() {
+      const saved = localStorage.getItem('travel_current_user');
+      if (saved) currentUser = JSON.parse(saved);
+      renderAuthArea();
+      updatePendingBadge();
+    }
+
+    function renderAuthArea() {
+      const area = document.getElementById('authUserArea');
+      const d = dict[currentLang] || dict['EN'];
+      const adminBtn = document.getElementById('adminPanelBtn');
+      const inboxBtn = document.getElementById('inboxBtn');
+
+      if (currentUser) {
+        area.innerHTML = `<span style="font-weight:600; font-size:0.9rem;">👤 ${currentUser.username} ${currentUser.isAdmin ? '👑' : ''}</span><button class="btn-auth" onclick="handleLogout()" style="font-size:0.8rem;">${d.logout}</button>`;
+        inboxBtn.style.display = 'flex';
+        adminBtn.style.display = currentUser.isAdmin ? 'flex' : 'none';
+      } else {
+        area.innerHTML = `<button class="btn-auth" onclick="openLoginModal()">${d.login}</button><button class="btn-auth btn-auth-primary" onclick="openRegisterModal()">${d.register}</button>`;
+        adminBtn.style.display = 'none';
+        inboxBtn.style.display = 'none';
+      }
+    }
+
+    function openLoginModal() { document.getElementById('loginModal').classList.add('active'); }
+    function openRegisterModal() { document.getElementById('registerModal').classList.add('active'); }
+    function closeAuthModals() {
+      document.getElementById('loginModal').classList.remove('active');
+      document.getElementById('registerModal').classList.remove('active');
+    }
+
+    function openAddCityModal() {
+      if (!currentUser) { alert("Please log in first!"); openLoginModal(); return; }
+      const select = document.getElementById('modalCountrySelect');
+      let html = '';
+      Array.from(new Set([...allWorldCountries, ...Object.keys(citiesData)])).sort((a,b) => a.localeCompare(b, 'en')).forEach(c => { html += `<option value="${c}">${c}</option>`; });
+      select.innerHTML = html;
+      document.getElementById('modalCityNameInput').value = '';
+      document.getElementById('addCityModal').classList.add('active');
+    }
+
+    function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
+
+    function submitNewCity() {
+      const country = document.getElementById('modalCountrySelect').value;
+      const rawCity = document.getElementById('modalCityNameInput').value.trim();
+      if (!rawCity || rawCity.length < 2) { alert("Invalid city name."); return; }
+      const formattedCity = transliterateToLatin(rawCity);
+
+      if (currentUser.isAdmin) {
+        if (!citiesData[country]) citiesData[country] = [];
+        if (!citiesData[country].includes(formattedCity)) {
+          citiesData[country].push(formattedCity);
+          localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+        }
+        selectCity(formattedCity);
+        closeAddCityModal();
+        alert("City added successfully!");
+      } else {
+        pendingCities.push({ id: Date.now(), country, city: formattedCity, author: currentUser.username });
+        localStorage.setItem('travel_pending_cities', JSON.stringify(pendingCities));
+        updatePendingBadge();
+        closeAddCityModal();
+        alert("City sent for moderator approval!");
+      }
+    }
+
+    function updatePendingBadge() { document.getElementById('pendingCount').innerText = pendingCities.length; }
+
+    function openAdminModal() {
+      const list = document.getElementById('pendingCitiesList');
+      if (pendingCities.length === 0) {
+        list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No pending cities.</p>`;
+      } else {
+        let html = '';
+        pendingCities.forEach(item => {
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem;"><div><strong>📍 ${item.city}</strong><div style="font-size:0.8rem; color:var(--text-muted);">${item.country} (Author: ${item.author})</div></div><div><button class="btn-submit" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="approveCity(${item.id})">Approve</button></div></div>`;
+        });
+        list.innerHTML = html;
+      }
+      document.getElementById('adminModal').classList.add('active');
+    }
+
+    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
+
+    function approveCity(id) {
+      const index = pendingCities.findIndex(p => p.id === id);
+      if (index !== -1) {
+        const item = pendingCities[index];
+        if (!citiesData[item.country]) citiesData[item.country] = [];
+        if (!citiesData[item.country].includes(item.city)) {
+          citiesData[item.country].push(item.city);
+          localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+        }
+        pendingCities.splice(index, 1);
+        localStorage.setItem('travel_pending_cities', JSON.stringify(pendingCities));
+        updatePendingBadge();
+        openAdminModal();
+        renderSidebar();
+        alert("City approved!");
+      }
+    }
+
+    function deleteCity(country, city, event) {
+      event.stopPropagation();
+      if (!confirm(`Delete "${city}"?`)) return;
+      citiesData[country] = citiesData[country].filter(c => c !== city);
+      if (citiesData[country].length === 0) delete citiesData[country];
+      localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+      if (selectedCity === city) selectedCity = 'BANGKOK';
+      renderSidebar();
+      renderFeed();
+    }
+
+    function editCity(country, city, event) {
+      event.stopPropagation();
+      editingCityInfo = { country, oldName: city };
+      document.getElementById('editCityNameInput').value = city;
+      document.getElementById('editCityModal').classList.add('active');
+    }
+
+    function closeEditCityModal() { document.getElementById('editCityModal').classList.remove('active'); }
+
+    function saveEditedCity() {
+      const newName = transliterateToLatin(document.getElementById('editCityNameInput').value.trim());
+      if (!newName) return alert("Invalid name!");
+      const { country, oldName } = editingCityInfo;
+      const index = citiesData[country].indexOf(oldName);
+      if (index !== -1) {
+        citiesData[country][index] = newName;
+        localStorage.setItem('travel_cities_data_en', JSON.stringify(citiesData));
+        posts.forEach(p => { if (p.city === oldName) p.city = newName; });
+        saveData();
+        if (selectedCity === oldName) selectedCity = newName;
+        closeEditCityModal();
+        renderSidebar();
+        renderFeed();
+        alert("City updated!");
+      }
+    }
+
+    function suggestUsername() {
+      const prefixes = ["Traveler", "Explorer", "Nomad", "Captain", "Voyager", "Rider"];
+      let suggested = "";
+      while (!suggested) {
+        let name = prefixes[Math.floor(Math.random() * prefixes.length)] + "_" + Math.floor(100 + Math.random() * 900);
+        if (!users.some(u => u.username.toLowerCase() === name.toLowerCase())) suggested = name;
+      }
+      document.getElementById('regUsername').value = suggested;
+    }
+
+    function handleRegister() {
+      const username = document.getElementById('regUsername').value.trim();
+      const email = document.getElementById('regEmail').value.trim();
+      const password = document.getElementById('regPassword').value;
+      if (!username || !email || !password) return alert("Please fill all fields.");
+      if (users.some(u => u.username.toLowerCase() === username.toLowerCase())) return alert("Username already taken!");
+      if (users.some(u => u.email.toLowerCase() === email.toLowerCase())) return alert("Account already exists with this email.");
+      users.push({ username, email, password, isAdmin: false });
+      localStorage.setItem('travel_users', JSON.stringify(users));
+      currentUser = { username, email, isAdmin: false };
+      localStorage.setItem('travel_current_user', JSON.stringify(currentUser));
+      closeAuthModals();
+      renderAuthArea();
+      renderFeed();
+      updateInboxBadge();
+      alert("Account created successfully!");
+    }
+
+    function handleLogin() {
+      const loginInput = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const user = users.find(u => (u.email.toLowerCase() === loginInput.toLowerCase() || u.username.toLowerCase() === loginInput.toLowerCase()) && u.password === password);
+      if (!user) return alert("Incorrect username/email or password!");
+      currentUser = { username: user.username, email: user.email, isAdmin: !!user.isAdmin };
+      localStorage.setItem('travel_current_user', JSON.stringify(currentUser));
+      closeAuthModals();
+      renderAuthArea();
+      renderFeed();
+      updateInboxBadge();
+      renderLiveChat();
+    }
+
+    function handleLogout() {
+      currentUser = null;
+      localStorage.removeItem('travel_current_user');
+      renderAuthArea();
+      renderFeed();
+      updateInboxBadge();
+      renderLiveChat();
+    }
+
+    function getMostPopularCity() {
+      if (!posts || posts.length === 0) return 'BANGKOK';
+      const counts = {};
+      posts.forEach(p => { counts[p.city] = (counts[p.city] || 0) + 1; });
+      let maxCity = 'BANGKOK', maxCount = -1;
+      for (const [city, count] of Object.entries(counts)) {
+        if (count > maxCount) { maxCount = count; maxCity = city; }
+      }
+      return maxCity;
+    }
+
+    function initMostPopularCity() {
+      selectedCity = getMostPopularCity();
+      renderSidebar();
+      renderFeed();
+    }
+
+    function updateTexts() {
+      const d = dict[currentLang] || dict['EN'];
+      document.getElementById('citySearchInput').placeholder = d.search;
+      document.getElementById('customCityBtnText').innerText = d.addCustom;
+      document.getElementById('bannerTitle').innerText = d.bannerTitle;
+      document.getElementById('bannerDesc').innerText = d.bannerDesc;
+      document.getElementById('postText').placeholder = d.postPlaceholder;
+      document.getElementById('postSubmitBtn').innerText = d.submitBtn;
+      document.getElementById('popularTitleText').innerText = d.popularTitle;
+      document.getElementById('adminPanelText').innerText = d.adminPanel;
+      document.getElementById('liveChatTitle').innerText = d.liveChatTitle;
+      document.getElementById('chatInputMessage').placeholder = d.chatPlaceholder;
+      document.getElementById('chatSendBtn').innerText = d.send;
+      document.getElementById('currentFeedTitle').innerText = d.posts;
+      
+      document.getElementById('inboxBtn').innerHTML = `<i class="fa-solid fa-envelope"></i> ${d.inbox} (<span id="inboxCount">0</span>)`;
+      updateInboxBadge();
+    }
+
+    function updateInboxBadge() {
+      if (!currentUser) { document.getElementById('inboxCount').innerText = '0'; return; }
+      document.getElementById('inboxCount').innerText = messages.filter(m => m.to === currentUser.username).length;
+    }
+
+    function renderSidebar() {
+      const container = document.getElementById('sidebarCityListContainer');
+      const searchTerm = document.getElementById('citySearchInput').value.toLowerCase();
+      let html = '';
+      for (const [category, cityList] of Object.entries(citiesData)) {
+        const filtered = cityList.filter(c => c.toLowerCase().includes(searchTerm) || category.toLowerCase().includes(searchTerm));
+        if (filtered.length > 0) {
+          html += `<div class="category-title">${category}</div><ul class="city-list">`;
+          filtered.forEach(city => {
+            const count = posts.filter(p => p.city === city).length;
+            html += `<li class="city-item ${selectedCity === city ? 'active' : ''}" onclick="selectCity('${city}')">
+              <span>📍 ${city}</span>
+              <div style="display:flex; align-items:center; gap: 8px;">
+                ${currentUser && currentUser.isAdmin ? `<div class="city-actions-admin"><button class="btn-city-edit" onclick="editCity('${category}', '${city}', event)" title="Edit"><i class="fa-solid fa-pen"></i></button><button class="btn-city-del" onclick="deleteCity('${category}', '${city}', event)" title="Delete"><i class="fa-solid fa-trash"></i></button></div>` : ''}
+                <span class="city-count">${count}</span>
+              </div>
+            </li>`;
+          });
+          html += `</ul>`;
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    function filterCityList() { renderSidebar(); }
+
+    function selectCity(city) {
+      selectedCity = city;
+      renderSidebar();
+      renderFeed();
+    }
+
+    function renderPopularCities() {
+      const container = document.getElementById('popularCardsContainer');
+      const counts = {};
+      posts.forEach(p => { counts[p.city] = (counts[p.city] || 0) + 1; });
+      const topCities = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).slice(0, 15);
+      
+      let html = '';
+      const repeatCities = [...topCities, ...topCities];
+      
+      repeatCities.forEach(city => {
+        html += `
+          <div class="popular-card" onclick="selectCity('${city}')">
+            <span>📍 ${city}</span>
+            <span class="popular-badge">${counts[city] || 0}</span>
+          </div>
+        `;
+      });
+      container.innerHTML = html;
+    }
+
+    let autoScrollInterval;
+    function startAutoScroll() {
+      const container = document.getElementById('popularCardsContainer');
+      if (!container) return;
+
+      autoScrollInterval = setInterval(() => {
+        if (!container.matches(':hover')) {
+          container.scrollLeft += 1;
+          if (container.scrollLeft >= (container.scrollWidth - container.clientWidth - 5)) {
+            container.scrollLeft = 0;
+          }
+        }
+      }, 30);
+    }
+
+    function renderLiveChat() {
+      const container = document.getElementById('chatMessagesContainer');
+
+      if (liveChatMessages.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 1rem;">No messages in global chat yet.</div>`;
+        return;
+      }
+
+      let html = '';
+      liveChatMessages.forEach(m => {
+        html += `<div class="chat-msg-item"><span>${m.author}:</span> ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time}</span></div>`;
+      });
+      container.innerHTML = html;
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendLiveChatMessage() {
+      if (!currentUser) { alert("Please log in to chat!"); openLoginModal(); return; }
+      const input = document.getElementById('chatInputMessage');
+      const text = input.value.trim();
+      if (!text) return;
+
+      liveChatMessages.push({
+        id: Date.now(),
+        author: currentUser.username,
+        text,
+        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+      });
+      localStorage.setItem('travel_live_chat', JSON.stringify(liveChatMessages));
+      input.value = '';
+      renderLiveChat();
+    }
+
+    function handleChatKeyPress(e) {
+      if (e.key === 'Enter') sendLiveChatMessage();
+    }
+
+    function createNewPost() {
+      if (!currentUser) return alert("Please log in to post!");
+      const text = document.getElementById('postText').value.trim();
+      if (!text) return alert("Please write a message.");
+      posts.unshift({ id: Date.now(), city: selectedCity, text, author: currentUser.username, date: new Date().toISOString().split('T')[0], replies: [] });
+      saveData();
+      document.getElementById('postText').value = '';
+      renderSidebar();
+      renderPopularCities();
+      renderFeed();
+    }
+
+    function toggleReplyForm(postId) {
+      if (!currentUser) return alert("Please log in to reply!");
+      const el = document.getElementById(`reply-form-${postId}`);
+      if (el) el.classList.toggle('active');
+    }
+
+    function submitReply(postId) {
+      if (!currentUser) return alert("Please log in to reply!");
+      const text = document.getElementById(`reply-input-${postId}`).value.trim();
+      if (!text) return;
+      const post = posts.find(p => p.id === postId);
+      if (post) {
+        if (!post.replies) post.replies = [];
+        post.replies.push({ id: Date.now(), author: currentUser.username, text, date: new Date().toISOString().split('T')[0] });
+        saveData();
+        renderFeed();
+      }
+    }
+
+    function hasUserRepliedToPost(post, targetUser) {
+      if (!currentUser || post.author !== targetUser) return false;
+      return post.replies && post.replies.some(r => r.author === currentUser.username);
+    }
+
+    function renderFeed() {
+      const container = document.getElementById('postsFeedContainer');
+      const d = dict[currentLang] || dict['EN'];
+      let filteredPosts = posts.filter(p => p.city === selectedCity);
+
+      document.getElementById('currentFeedTitle').innerText = `${selectedCity} - ${d.posts}`;
+      document.getElementById('postCountBadge').innerText = `${filteredPosts.length} ${d.postCount}`;
+
+      if (filteredPosts.length === 0) {
+        container.innerHTML = `<div style="text-align: center; color: var(--text-muted); padding: 2rem;">No posts yet for this city. Be the first!</div>`;
+        return;
+      }
+
+      let html = '';
+      filteredPosts.forEach(post => {
+        const canDmPostAuthor = hasUserRepliedToPost(post, post.author);
+        const isSelfPost = currentUser && post.author === currentUser.username;
+        html += `<div class="post-card"><div class="post-header"><div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div><span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${post.date}</span></div><div class="post-content">${post.text}</div><div class="post-footer"><button class="btn-reply" onclick="toggleReplyForm(${post.id})"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}</div><div class="reply-form" id="reply-form-${post.id}"><textarea id="reply-input-${post.id}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea><div style="display:flex; justify-content:flex-end;"><button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply(${post.id})">${d.replyBtn}</button></div></div>${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => `<div class="reply-card"><div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${currentUser && r.author === currentUser.username ? '(You)' : ''}</span><span style="font-size:0.75rem; color:var(--text-muted);">${r.date}</span></div><div style="font-size:0.9rem;">${r.text}</div></div>`).join('')}</div>` : ''}</div>`;
+      });
+      container.innerHTML = html;
+    }
+
+    function tryOpenDm(targetUser, canDm) {
+      if (!currentUser) return alert("Please log in to send a message!");
+      if (!canDm) { alert(`You must reply to ${targetUser}'s post before sending a direct message!`); return; }
+      openDmModal(targetUser);
+    }
+
+    function openDmModal(author) {
+      targetDmUser = author;
+      const d = dict[currentLang] || dict['EN'];
+      document.getElementById('dmModalTitle').innerText = d.dmModalTitle;
+      document.getElementById('dmTargetUser').innerText = `Messaging ${author}...`;
+      document.getElementById('dmMessageText').value = '';
+      document.getElementById('dmModal').classList.add('active');
+    }
+
+    function closeDmModal() { document.getElementById('dmModal').classList.remove('active'); }
+
+    function sendDirectMessage() {
+      const text = document.getElementById('dmMessageText').value.trim();
+      if (!text) return;
+      messages.push({ from: currentUser.username, to: targetDmUser, text, date: new Date().toLocaleString() });
+      saveData();
+      updateInboxBadge();
+      closeDmModal();
+      alert("Message sent!");
+    }
+
+    function openInbox() {
+      if (!currentUser) return alert("Please log in to view inbox!");
+      const list = document.getElementById('inboxMessagesList');
+      const myMsgs = messages.filter(m => m.to === currentUser.username);
+      if (myMsgs.length === 0) {
+        list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
+      } else {
+        let html = '';
+        myMsgs.format = '';
+        myMsgs.forEach(m => { html += `<div style="padding: 0.60rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;"><strong>From: ${m.from}</strong><p style="font-size:0.9rem; margin: 0.2rem 0;">${m.text}</p><span style="font-size: 0.75rem; color:var(--text-muted);">${m.date}</span></div>`; });
+        list.innerHTML = html;
+      }
+      document.getElementById('inboxModal').classList.add('active');
+    }
+
+    function closeInbox() { document.getElementById('inboxModal').classList.remove('active'); }
+
+    function saveData() {
+      localStorage.setItem('travel_posts', JSON.stringify(posts));
+      localStorage.setItem('travel_messages', JSON.stringify(messages));
+    }
+
+    // IP KONUMUNA GÖRE OTOMATİK DİL TESPİTİ
+    async function detectUserLanguageByIP() {
+      try {
+        const response = await fetch('https://ipapi.co/json/');
+        const data = await response.json();
+        if (data && data.country_code) {
+          const country = data.country_code;
+          // Rusya ve Ukrayna IP'leri için Rusça (RU)
+          if (country === 'RU' || country === 'UA') {
+            currentLang = 'RU';
+          } 
+          // Türkiye IP'si için Türkçe (TR) opsiyonel aktif edilebilir (İsteğe bağlı EN kalsın derseniz burayı atlayabilirsiniz)
+          else if (country === 'TR') {
+            currentLang = 'TR';
+          }
+          // Diğer tüm ülkeler varsayılan olarak EN kalır
+          document.getElementById('langLabel').innerText = currentLang;
+          updateTexts();
+          renderSidebar();
+          renderPopularCities();
+          renderFeed();
+        }
+      } catch (e) {
+        console.log("IP geolocation fallback to default (EN)");
+      }
+    }
+
+    initAuth();
+    initMostPopularCity();
+    updateTexts();
+    renderSidebar();
+    renderPopularCities();
+    renderFeed();
+    renderLiveChat();
+    startAutoScroll();
+    
+    // IP Konum kontrolünü başlat
+    detectUserLanguageByIP();
+  </script>
+</body>
+</html>
