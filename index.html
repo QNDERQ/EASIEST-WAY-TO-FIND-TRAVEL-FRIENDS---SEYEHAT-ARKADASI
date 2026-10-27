@@ -899,7 +899,7 @@
         ],
         "SURABAYA": [
           "Surabaya'da tarihi Red Bridge ve House of Sampoerna müzesini gezecek arkadaş arıyorum.",
-          "Madura köprüsi üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
+          "Madura köprüsü üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
           "Surabaya'nın meşhur Rawon çorbasını en iyi yapan esnaf lokantasını keşfe çıkıyoruz."
         ],
         "BANDUNG": [
@@ -1256,14 +1256,13 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE / LOCALSTORAGE SENKRONİZASYONU ---
+    // --- FIRESTORE / GÜÇLENDİRİLMİŞ OTOMATİK VERİ EŞLEŞTİRME ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // Önbellekteki eski veriyi sıfırlayıp güncel şehir listesini yüklüyoruz
       citiesData = initialCitiesData;
-      localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+      localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
 
       renderSidebar();
 
@@ -1275,12 +1274,13 @@
         existingTexts.add(docSnap.data().text);
       });
 
-      if (postsSnapshot.size < 200) {
+      // Eğer yeterli veri yoksa veya eksikse yeni zengin verileri yükle
+      if (postsSnapshot.size < 150) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
           if (!existingTexts.has(p.text)) {
             await addDoc(postsRef, {
-              city: p.city,
+              city: p.city.toUpperCase().trim(),
               text: p.text,
               author: p.author,
               date: p.date,
@@ -1292,7 +1292,16 @@
 
       onSnapshot(postsRef, (snapshot) => {
         posts = [];
-        snapshot.forEach((docSnap) => posts.push({ firestoreId: docSnap.id, ...docSnap.data() }));
+        snapshot.forEach((docSnap) => {
+          let data = docSnap.data();
+          // Şehir isimlerindeki olası küçük harf veya boşluk uyumsuzluklarını otomatik düzelt
+          if (data.city) {
+            data.city = data.city.toUpperCase().trim();
+            if (data.city === "DENPASAR") data.city = "BALI";
+          }
+          posts.push({ firestoreId: docSnap.id, ...data });
+        });
+
         renderSidebar();
         renderPopularCities();
         renderFeed();
@@ -1353,7 +1362,7 @@
         } else {
           citiesData[country] = [formattedCity];
         }
-        localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
@@ -1396,7 +1405,7 @@
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+          localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
         }
         await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
@@ -1419,7 +1428,7 @@
       if (!confirm(`Delete "${city}"?`)) return;
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
-      localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+      localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
       if (selectedCity === city) selectedCity = 'BALI';
       renderSidebar();
       renderPopularCities();
@@ -1442,7 +1451,7 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
-        localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v4', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
@@ -1517,7 +1526,7 @@
     }
 
     function initMostPopularCity() {
-      selectedCity = getMostPopularCity();
+      selectedCity = 'BALI';
       renderSidebar();
       renderPopularCities();
       renderFeed();
@@ -1594,12 +1603,10 @@
       renderFeed();
     }
 
-    // YAN LİSTEDEKİ ŞEHİRLERLE TAM SENKRONİZE POPÜLER ŞEHİRLER
     function renderPopularCities() {
       const container = document.getElementById('popularCardsContainer');
       const counts = {};
 
-      // Sadece yan menüde mevcut olan aktif şehirlerin gönderi sayılarını hesapla
       const activeCities = [];
       for (const cityList of Object.values(citiesData)) {
         activeCities.push(...cityList);
@@ -1611,7 +1618,6 @@
         }
       });
 
-      // En çok paylaşım yapılan şehirleri sırala
       const topCities = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 15);
       
       let html = '';
