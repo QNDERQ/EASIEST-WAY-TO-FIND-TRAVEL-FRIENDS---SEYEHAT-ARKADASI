@@ -858,7 +858,6 @@
         ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
       };
 
-      // 1. Popüler şehirleri 65-70 posta çıkar (BANGKOK, DENPASAR, TOKYO, LISBON, ISTANBUL, PHUKET vb.)
       const superPopular = ['BANGKOK', 'DENPASAR', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
@@ -882,7 +881,6 @@
         }
       });
 
-      // 2. Diğer tüm şehirler için 7-8 adet gerçekçi, yanıtlı yorum ekle (Türkçe, İngilizce ve Rusça karışık)
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
           if (!superPopular.includes(cityName)) {
@@ -1148,7 +1146,7 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ ---
+    // --- FIRESTORE VERİTABANI BAŞLANGIÇ VE DİNLEME İŞLEMLERİ (AKILLI BİRLEŞTİRME) ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
@@ -1172,19 +1170,28 @@
         renderPopularCities();
       });
 
-      // 2. Gönderileri (Posts) Kontrol Et ve Boşsa Yeni Zengin/Dilli Örnekleri Otomatik Ekle
+      // 2. Gönderileri (Posts) Kontrol Et: Kullanıcıların yorumlarını SİLMEDEN eksik starter postları ekle
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
-      if (postsSnapshot.empty) {
+      
+      const existingTexts = new Set();
+      postsSnapshot.forEach(docSnap => {
+        existingTexts.add(docSnap.data().text);
+      });
+
+      // Eğer toplam post sayısı örnek paket sayısından azsa, eksik olanları kullanıcı yazılarına dokunmadan ekle
+      if (postsSnapshot.size < 200) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
-          await addDoc(postsRef, {
-            city: p.city,
-            text: p.text,
-            author: p.author,
-            date: p.date,
-            replies: p.replies || []
-          });
+          if (!existingTexts.has(p.text)) {
+            await addDoc(postsRef, {
+              city: p.city,
+              text: p.text,
+              author: p.author,
+              date: p.date,
+              replies: p.replies || []
+            });
+          }
         }
       }
 
@@ -1649,7 +1656,7 @@
     function openInbox() {
       if (!currentUser) return alert("Please log in to view inbox!");
       const list = document.getElementById('inboxMessagesList');
-      const myMsgs = messages.files ? messages.files : messages.filter(m => m.to === currentUser.username);
+      const myMsgs = messages.filter(m => m.to === currentUser.username);
       if (myMsgs.length === 0) {
         list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
       } else {
@@ -1669,7 +1676,7 @@
         if (data && data.country_code) {
           const country = data.country_code;
           if (country === 'RU' || country === 'UA') currentLang = 'RU';
-          else if (country === 'TR') currentLang = 'TR';
+          else if (country === 'TR') currentLang, currentLang = 'TR';
           document.getElementById('langLabel').innerText = currentLang;
           updateTexts();
           renderSidebar();
