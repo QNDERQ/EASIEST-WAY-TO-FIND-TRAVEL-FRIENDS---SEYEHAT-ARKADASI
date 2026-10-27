@@ -737,7 +737,7 @@
 
   <script>
     let currentLang = 'EN';
-    let selectedCity = 'BANGKOK';
+    let selectedCity = 'BALI';
     let currentUser = null;
     let targetDmUser = '';
     let editingCityInfo = { country: '', oldName: '' };
@@ -770,10 +770,7 @@
       "Romania 🇷🇴", "Russia 🇷🇺", "Rwanda 🇷🇼",
       "Saint Kitts and Nevis 🇰🇳", "Saint Lucia 🇱🇨", "Saint Vincent and the Grenadines 🇻🇨", "Samoa 🇼🇸", "San Marino 🇸🇲", "Sao Tome and Principe 🇸🇹", "Saudi Arabia 🇸🇦", "Senegal 🇸🇳", "Serbia 🇷🇸", "Seychelles 🇸🇨", "Sierra Leone 🇸🇱", "Singapore 🇸🇬", "Slovakia 🇸🇰", "Slovenia 🇸🇮", "Solomon Islands 🇸🇧", "Somalia 🇸🇴", "South Africa 🇿🇦", "South Sudan 🇸🇸", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sudan 🇸🇩", "Suriname 🇸🇷", "Sweden 🇸🇪", "Switzerland 🇨🇭", "Syria 🇸🇾",
       "Taiwan 🇹🇼", "Tajikistan 🇹🇯", "Tanzania 🇹🇿", "Thailand 🇹🇭", "Timor-Leste 🇹🇱", "Togo 🇹🇬", "Tonga 🇹🇴", "Trinidad and Tobago 🇹🇹", "Tunisia 🇹🇳", "Turkey 🇹🇷", "Turkmenistan 🇹🇲", "Tuvalu 🇹🇻",
-      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿",
-      "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳",
-      "Yemen 🇾🇪",
-      "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
+      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
     ];
 
     const initialCitiesData = {
@@ -853,7 +850,6 @@
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      // BALI için özel, mantıklı, zengin ve birbirinden farklı 38 adet özgün gönderi
       const detailedBaliPosts = [
         "Canggu'da coworking alanında çalışıyorum, öğleden sonra Echo Beach'te sörf yapacak partner arıyorum.",
         "Ubud'da orman içinde harika bir yoga kampındayım. Tapınak gezisi için yarın sabah katılmak isteyen var mı?",
@@ -864,7 +860,7 @@
         "Sanur sahilinde sakin bir yürüyüş ve lokal deniz ürünleri restoranı için akşam buluşalım.",
         "Canggu şık kafelerinde kahve molası ve remote work seansı yapmak isteyen dijital göçebeler yazsın.",
         "Tegallalang pirinç teraslarında fotoğraf çekimi ve salıncak turu planlıyorum, araç kiralayacağız.",
-        "Jimbaran sahirlinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
+        "Jimbaran sahilinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
         "Bedugul'deki Ulun Danu Beratan tapınağına kuzey turu yapacağız, arabada 2 kişilik boş yerimiz var.",
         "Amed'de şnorkel ve serbest dalış (freedive) noktalarını keşfedecek su altı tutkunu arıyorum.",
         "Sidemen vadisinde yeşillikler içinde huzurlu bir yürüyüş ve köy turu yapmak isteyenler buraya.",
@@ -889,13 +885,12 @@
         "Berawa sahilinde akşam yürüyüşü ve ardından akustik canlı müzik dinletisi olan bir mekana geçeceğiz.",
         "Bali'de uzun dönem kalacak dijital göçebeler için villa paylaşımı veya ortak yaşam üzerine sohbet.",
         "Taman Ayun tapınağı ve UNESCO kültür mirası su tapınakları turu için rehberli araç paylaşımı.",
-        "Nyepi (Sessizlik Günü) öncesi Ogod-Ogod geçit törenlerini izlemek için harika bir akşam planı.",
+        "Nyepi (Sessizlik Günü) öncesi Ogoh-Ogoh geçit törenlerini izlemek için harika bir akşam planı.",
         "Echo beach'te gün batımı sörfü sonrası sahilde hindistan cevizi eşliğinde sohbet seansı.",
         "Bali'nin kuzeyinde dolunay seremonisine (Full Moon ceremony) local bir tapınakta katılım.",
         "Kampung foreigner dostu mekanlarda akşam çalışma ve networking buluşması."
       ];
 
-      // Endonezya'daki diğer şehirlere (Jakarta, Surabaya, Bandung, Yogyakarta, Medan, Lombok) 3-4'er adet özel yorum
       const otherIndoCityPosts = {
         "JAKARTA": [
           "Jakarta'da Kota Tua bölgesinde tarihi bisiklet turu ve kafe molası için kimler var?",
@@ -904,7 +899,7 @@
         ],
         "SURABAYA": [
           "Surabaya'da tarihi Red Bridge ve House of Sampoerna müzesini gezecek arkadaş arıyorum.",
-          "Madura köprüsü üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
+          "Madura köprüsi üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
           "Surabaya'nın meşhur Rawon çorbasını en iyi yapan esnaf lokantasını keşfe çıkıyoruz."
         ],
         "BANDUNG": [
@@ -1261,21 +1256,16 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- FIRESTORE / LOCALSTORAGE HİBRİT VERİTABANI YÖNETİMİ ---
+    // --- FIRESTORE / LOCALSTORAGE SENKRONİZASYONU ---
     window.startTravelApp = async function() {
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      const savedCitiesJson = localStorage.getItem('travel_friend_cities_v2');
-      if (savedCitiesJson) {
-        citiesData = JSON.parse(savedCitiesJson);
-      } else {
-        citiesData = initialCitiesData;
-        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
-      }
+      // Önbellekteki eski veriyi sıfırlayıp güncel şehir listesini yüklüyoruz
+      citiesData = initialCitiesData;
+      localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
 
       renderSidebar();
-      renderPopularCities();
 
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
@@ -1285,7 +1275,7 @@
         existingTexts.add(docSnap.data().text);
       });
 
-      if (postsSnapshot.size < 300) {
+      if (postsSnapshot.size < 200) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
           if (!existingTexts.has(p.text)) {
@@ -1363,7 +1353,7 @@
         } else {
           citiesData[country] = [formattedCity];
         }
-        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
@@ -1406,11 +1396,12 @@
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
+          localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
         }
         await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
         renderSidebar();
+        renderPopularCities();
         alert("City approved!");
       }
     }
@@ -1428,9 +1419,10 @@
       if (!confirm(`Delete "${city}"?`)) return;
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
-      localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
-      if (selectedCity === city) selectedCity = 'BANGKOK';
+      localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
+      if (selectedCity === city) selectedCity = 'BALI';
       renderSidebar();
+      renderPopularCities();
       renderFeed();
     }
 
@@ -1450,11 +1442,12 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
-        localStorage.setItem('travel_friend_cities_v2', JSON.stringify(citiesData));
+        localStorage.setItem('travel_friend_cities_v3', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
         renderSidebar();
+        renderPopularCities();
         renderFeed();
         alert("City updated!");
       }
@@ -1513,10 +1506,10 @@
     }
 
     function getMostPopularCity() {
-      if (!posts || posts.length === 0) return 'BANGKOK';
+      if (!posts || posts.length === 0) return 'BALI';
       const counts = {};
       posts.forEach(p => { counts[p.city] = (counts[p.city] || 0) + 1; });
-      let maxCity = 'BANGKOK', maxCount = -1;
+      let maxCity = 'BALI', maxCount = -1;
       for (const [city, count] of Object.entries(counts)) {
         if (count > maxCount) { maxCount = count; maxCity = city; }
       }
@@ -1526,6 +1519,7 @@
     function initMostPopularCity() {
       selectedCity = getMostPopularCity();
       renderSidebar();
+      renderPopularCities();
       renderFeed();
     }
 
@@ -1600,11 +1594,25 @@
       renderFeed();
     }
 
+    // YAN LİSTEDEKİ ŞEHİRLERLE TAM SENKRONİZE POPÜLER ŞEHİRLER
     function renderPopularCities() {
       const container = document.getElementById('popularCardsContainer');
       const counts = {};
-      posts.forEach(p => { counts[p.city] = (counts[p.city] || 0) + 1; });
-      const topCities = Object.keys(counts).sort((a,b) => counts[b] - counts[a]).slice(0, 15);
+
+      // Sadece yan menüde mevcut olan aktif şehirlerin gönderi sayılarını hesapla
+      const activeCities = [];
+      for (const cityList of Object.values(citiesData)) {
+        activeCities.push(...cityList);
+      }
+
+      posts.forEach(p => {
+        if (activeCities.includes(p.city)) {
+          counts[p.city] = (counts[p.city] || 0) + 1;
+        }
+      });
+
+      // En çok paylaşım yapılan şehirleri sırala
+      const topCities = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).slice(0, 15);
       
       let html = '';
       const repeatCities = [...topCities, ...topCities];
