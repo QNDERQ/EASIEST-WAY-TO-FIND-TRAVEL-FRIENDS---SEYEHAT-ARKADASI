@@ -343,7 +343,14 @@
       border: 1px solid var(--border-color);
       border-radius: 6px;
     }
-    .chat-msg-item span { font-weight: 700; color: var(--primary); }
+    .chat-username-clickable {
+      font-weight: 700;
+      color: var(--primary);
+      cursor: pointer;
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+    .chat-username-clickable:hover { color: var(--primary-hover); }
 
     .chat-input-area { display: flex; gap: 0.5rem; }
     .chat-input-area input {
@@ -736,24 +743,38 @@
     let citiesData = {};
     let pendingCities = [];
 
+    // --- DÜNYADAKİ TÜM BAĞIMSIZ 195 ÜLKE (EKSİKSİZ LİSTE) ---
     const allWorldCountries = [
-      "Albania 🇦🇱", "Argentina 🇦🇷", "Australia 🇦🇺", "Austria 🇦🇹", "Azerbaijan 🇦🇿",
-      "Belgium 🇧🇪", "Bosnia and Herzegovina 🇧🇦", "Brazil 🇧🇷", "Bulgaria 🇧🇬", "Cambodia 🇰🇭", 
-      "Canada 🇨🇦", "China 🇨🇳", "Croatia 🇭🇷", "Czech Republic 🇨🇿", "Denmark 🇩🇰", 
-      "Dominican Republic 🇩🇴", "Egypt 🇪🇬", "Estonia 🇪🇪", "France 🇫🇷", "Georgia 🇬🇪", 
-      "Germany 🇩🇪", "Greece 🇬🇷", "Hong Kong 🇭🇰", "Hungary 🇭🇺", "India 🇮🇳", 
-      "Indonesia 🇮🇩", "Ireland 🇮🇪", "Israel 🇮🇱", "Italy 🇮🇹", "Japan 🇯🇵", 
-      "Kosovo 🇽🇰", "Macau 🇲🇴", "Malaysia 🇲🇾", "Mexico 🇲🇽", "Montenegro 🇲🇪", 
-      "Morocco 🇲🇦", "Netherlands 🇳🇱", "New Zealand 🇳🇿", "North Macedonia 🇲🇰", "Peru 🇵🇪", 
-      "Philippines 🇵🇭", "Poland 🇵🇱", "Portugal 🇵🇹", "Qatar 🇶🇦", "Romania 🇷🇴", 
-      "Russia 🇷🇺", "Saudi Arabia 🇸🇦", "Serbia 🇷🇸", "Singapore 🇸🇬", "Slovenia 🇸🇮", 
-      "South Africa 🇿🇦", "South Korea 🇰🇷", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sweden 🇸🇪", 
-      "Switzerland 🇨🇭", "Taiwan 🇹🇼", "Thailand 🇹🇭", "Turkey 🇹🇷", "Ukraine 🇺🇦", 
-      "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Vietnam 🇻🇳"
+      "Afghanistan 🇦🇫", "Albania 🇦🇱", "Algeria 🇩🇿", "Andorra 🇦🇩", "Angola 🇦🇴", "Antigua and Barbuda 🇦🇬", "Argentina 🇦🇷", "Armenia 🇦🇲", "Australia 🇦🇺", "Austria 🇦🇹", "Azerbaijan 🇦🇿",
+      "Bahamas 🇧🇸", "Bahrain 🇧🇭", "Bangladesh 🇧🇩", "Barbados 🇧🇧", "Belarus 🇧🇾", "Belgium 🇧🇪", "Belize 🇧🇿", "Benin 🇧🇯", "Bhutan 🇧🇹", "Bolivia 🇧🇴", "Bosnia and Herzegovina 🇧🇦", "Botswana 🇧🇼", "Brazil 🇧🇷", "Brunei 🇧🇳", "Bulgaria 🇧🇬", "Burkina Faso 🇧🇫", "Burundi 🇧🇮",
+      "Cabo Verde 🇨🇻", "Cambodia 🇰🇭", "Cameroon 🇨🇲", "Canada 🇨🇦", "Central African Republic 🇨🇫", "Chad 🇹🇩", "Chile 🇨🇱", "China 🇨🇳", "Colombia 🇨🇴", "Comoros 🇰🇲", "Congo 🇨🇬", "Costa Rica 🇨🇷", "Croatia 🇭🇷", "Cuba 🇨🇺", "Cyprus 🇨🇾", "Czech Republic 🇨🇿",
+      "Denmark 🇩🇰", "Djibouti 🇩🇯", "Dominica 🇩🇲", "Dominican Republic 🇩🇴",
+      "Ecuador 🇪🇨", "Egypt 🇪🇬", "El Salvador 🇸🇻", "Equatorial Guinea 🇬🇶", "Eritrea 🇪🇷", "Estonia 🇪🇪", "Eswatini 🇸🇿", "Ethiopia 🇪🇹",
+      "Fiji 🇫🇯", "Finland 🇫🇮", "France 🇫🇷",
+      "Gabon 🇬🇦", "Gambia 🇬🇲", "Georgia 🇬🇪", "Germany 🇩🇪", "Ghana 🇬🇭", "Greece 🇬🇷", "Grenada 🇬🇩", "Guatemala 🇬🇹", "Guinea 🇬🇳", "Guinea-Bissau 🇬🇼", "Guyana 🇬🇾",
+      "Haiti 🇭🇹", "Honduras 🇭🇳", "Hungary 🇭🇺",
+      "Iceland 🇮🇸", "India 🇮🇳", "Indonesia 🇮🇩", "Iran 🇮🇷", "Iraq 🇮🇶", "Ireland 🇮🇪", "Israel 🇮🇱", "Italy 🇮🇹",
+      "Jamaica 🇯🇲", "Japan 🇯🇵", "Jordan 🇯🇴",
+      "Kazakhstan 🇰🇿", "Kenya 🇰🇪", "Kiribati 🇰🇮", "North Korea 🇰🇵", "South Korea 🇰🇷", "Kosovo 🇽🇰", "Kuwait 🇰🇼", "Kyrgyzstan 🇰🇬",
+      "Laos 🇱🇦", "Latvia 🇱🇻", "Lebanon 🇱🇧", "Lesotho 🇱🇸", "Liberia 🇱🇷", "Libya 🇱🇾", "Liechtenstein 🇱🇮", "Lithuania 🇱🇹", "Luxembourg 🇱🇺",
+      "Madagascar 🇲🇬", "Malawi 🇲🇼", "Malaysia 🇲🇾", "Maldives 🇲🇻", "Mali 🇲🇱", "Malta 🇲🇹", "Marshall Islands 🇲🇭", "Mauritania 🇲🇷", "Mauritius 🇲🇺", "Mexico 🇲🇽", "Micronesia 🇫🇲", "Moldova 🇲🇩", "Monaco 🇲🇨", "Mongolia 🇲🇳", "Montenegro 🇲🇪", "Morocco 🇲🇦", "Mozambique 🇲🇿", "Myanmar 🇲🇲",
+      "Namibia 🇳🇦", "Nauru 🇳🇷", "Nepal 🇳🇵", "Netherlands 🇳🇱", "New Zealand 🇳🇿", "Nicaragua 🇳🇮", "Niger 🇳🇪", "Nigeria 🇳🇬", "North Macedonia 🇲🇰", "Norway 🇳🇴",
+      "Oman 🇴🇲",
+      "Pakistan 🇵🇰", "Palau 🇵🇼", "Palestine 🇵🇸", "Panama 🇵🇦", "Papua New Guinea 🇵🇬", "Paraguay 🇵🇾", "Peru 🇵🇪", "Philippines 🇵🇭", "Poland 🇵🇱", "Portugal 🇵🇹",
+      "Qatar 🇶🇦",
+      "Romania 🇷🇴", "Russia 🇷🇺", "Rwanda 🇷🇼",
+      "Saint Kitts and Nevis 🇰🇳", "Saint Lucia 🇱🇨", "Saint Vincent and the Grenadines 🇻🇨", "Samoa 🇼🇸", "San Marino 🇸🇲", "Sao Tome and Principe 🇸🇹", "Saudi Arabia 🇸🇦", "Senegal 🇸🇳", "Serbia 🇷🇸", "Seychelles 🇸🇨", "Sierra Leone 🇸🇱", "Singapore 🇸🇬", "Slovakia 🇸🇰", "Slovenia 🇸🇮", "Solomon Islands 🇸🇧", "Somalia 🇸🇴", "South Africa 🇿🇦", "South Sudan 🇸🇸", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sudan 🇸🇩", "Suriname 🇸🇷", "Sweden 🇸🇪", "Switzerland 🇨🇭", "Syria 🇸🇾",
+      "Taiwan 🇹🇼", "Tajikistan 🇹🇯", "Tanzania 🇹🇿", "Thailand 🇹🇭", "Timor-Leste 🇹🇱", "Togo 🇹🇬", "Tonga 🇹🇴", "Trinidad and Tobago 🇹🇹", "Tunisia 🇹🇳", "Turkey 🇹🇷", "Turkmenistan 🇹🇲", "Tuvalu 🇹🇻",
+      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿",
+      "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳",
+      "Yemen 🇾🇪",
+      "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
     ];
 
     const initialCitiesData = {
       "Thailand 🇹🇭": ["BANGKOK", "PHUKET", "PATTAYA", "KRABI", "CHIANG MAI"],
+      "Indonesia 🇮🇩": ["DENPASAR", "JAKARTA", "SURABAYA", "BANDUNG", "YOGYAKARTA", "MEDAN", "LOMBOK"],
+      "Singapore 🇸🇬": ["SINGAPORE"],
       "China 🇨🇳": ["HONG KONG", "SHENZHEN", "GUANGZHOU", "SHANGHAI", "BEIJING", "CHENGDU", "HANGZHOU"],
       "United Kingdom 🇬🇧": ["LONDON", "EDINBURGH"],
       "Macau 🇲🇴": ["MACAU"],
@@ -762,7 +783,6 @@
       "Saudi Arabia 🇸🇦": ["MECCA", "JEDDAH", "RIYADH"],
       "France 🇫🇷": ["PARIS", "NICE", "LYON"],
       "Malaysia 🇲🇾": ["KUALA LUMPUR", "JOHOR BAHRU"],
-      "Singapore 🇸🇬": ["SINGAPORE"],
       "United States 🇺🇸": ["NEW YORK", "LAS VEGAS", "MIAMI", "LOS ANGELES", "SAN FRANCISCO", "ORLANDO", "HONOLULU"],
       "Italy 🇮🇹": ["ROME", "MILAN", "VENICE", "FLORENCE"],
       "Japan 🇯🇵": ["TOKYO", "OSAKA", "KYOTO"],
@@ -774,7 +794,6 @@
       "Austria 🇦🇹": ["VIENNA"],
       "Netherlands 🇳🇱": ["AMSTERDAM"],
       "Vietnam 🇻🇳": ["HO CHI MINH CITY", "HANOI", "HOI AN"],
-      "Indonesia 🇮🇩": ["DENPASAR", "JAKARTA"],
       "Germany 🇩🇪": ["BERLIN", "MUNICH", "FRANKFURT"],
       "Egypt 🇪🇬": ["CAIRO", "SHARM EL SHEIKH"],
       "Poland 🇵🇱": ["WARSAW", "KRAKOW"],
@@ -858,7 +877,7 @@
         ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
       };
 
-      const superPopular = ['BANGKOK', 'DENPASAR', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
+      const superPopular = ['BANGKOK', 'DENPASAR', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
         for (let i = 1; i <= 68; i++) {
@@ -881,7 +900,6 @@
         }
       });
 
-      // Her az popüler şehre de en az 4-5 yorum ekle
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
           if (!superPopular.includes(cityName)) {
@@ -1139,7 +1157,7 @@
       if (!currentUser) { alert("Please log in first!"); openLoginModal(); return; }
       const select = document.getElementById('modalCountrySelect');
       let html = '';
-      Array.from(new Set([...allWorldCountries, ...Object.keys(citiesData)])).sort((a,b) => a.localeCompare(b, 'en')).forEach(c => { html += `<option value="${c}">${c}</option>`; });
+      allWorldCountries.forEach(c => { html += `<option value="${c}">${c}</option>`; });
       select.innerHTML = html;
       document.getElementById('modalCityNameInput').value = '';
       document.getElementById('addCityModal').classList.add('active');
@@ -1171,7 +1189,7 @@
         renderPopularCities();
       });
 
-      // 2. Gönderileri Kontrol Et
+      // 2. Gönderileri Kontrol Et ve Eksikleri Tamamla
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
@@ -1180,7 +1198,7 @@
         existingTexts.add(docSnap.data().text);
       });
 
-      if (postsSnapshot.size < 300) {
+      if (postsSnapshot.size < 350) {
         const richInitialPosts = generateRichForumPosts();
         for (const p of richInitialPosts) {
           if (!existingTexts.has(p.text)) {
@@ -1435,12 +1453,10 @@
       document.getElementById('inboxCount').innerText = messages.filter(m => m.to === currentUser.username).length;
     }
 
-    // --- EN ÇOK POSTU/YORUMU OLAN ÜLKELERİ EN ÜSTE ÇIKARAN AKILLI MÜNÜ FONKSİYONU ---
     function renderSidebar() {
       const container = document.getElementById('sidebarCityListContainer');
       const searchTerm = document.getElementById('citySearchInput').value.toLowerCase();
 
-      // Ülkelerin toplam gönderi sayılarını hesapla
       const countryPostCounts = {};
       for (const [category, cityList] of Object.entries(citiesData)) {
         let total = 0;
@@ -1450,7 +1466,6 @@
         countryPostCounts[category] = total;
       }
 
-      // Ülkeleri en çok paylaşımı olandan en aza doğru sırala
       const sortedCountries = Object.keys(citiesData).sort((a, b) => {
         return countryPostCounts[b] - countryPostCounts[a];
       });
@@ -1515,6 +1530,7 @@
       }
     }, 30);
 
+    // --- CANLI SOHBETTE KULLANICI ADINA TIKLAYIP DM ATMA ÖZELLİĞİ ---
     function renderLiveChat() {
       const container = document.getElementById('chatMessagesContainer');
       if (!container) return;
@@ -1526,10 +1542,28 @@
 
       let html = '';
       liveChatMessages.forEach(m => {
-        html += `<div class="chat-msg-item"><span>${m.author}:</span> ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time || ''}</span></div>`;
+        const isAI = m.author.includes("Gemini");
+        const authorDisplay = isAI 
+          ? `<span>${m.author}:</span>` 
+          : `<span class="chat-username-clickable" onclick="handleChatUserClick('${m.author}')" title="Click to message ${m.author}">${m.author}:</span>`;
+
+        html += `<div class="chat-msg-item">${authorDisplay} ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time || ''}</span></div>`;
       });
       container.innerHTML = html;
       container.scrollTop = container.scrollHeight;
+    }
+
+    function handleChatUserClick(authorName) {
+      if (!currentUser) {
+        alert("Please log in to send a direct message!");
+        openLoginModal();
+        return;
+      }
+      if (currentUser.username === authorName) {
+        alert("You cannot send a direct message to yourself.");
+        return;
+      }
+      openDmModal(authorName);
     }
 
     async function sendLiveChatMessage() {
