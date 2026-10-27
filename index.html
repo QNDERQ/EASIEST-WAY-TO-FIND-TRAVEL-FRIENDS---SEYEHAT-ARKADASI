@@ -676,7 +676,7 @@
     </div>
   </div>
 
-  <!-- Firebase ve Gemini API Entegrasyonu (Vertex AI modülü kaldırıldı, doğrudan REST API fetch kullanılıyor) -->
+  <!-- Firebase ve Gemini API Entegrasyonu -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -694,7 +694,6 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Gemini API için Doğrudan Fetch Fonksiyonu (CORS / MIME hatalarını kökten çözer)
     async function askGeminiAPI(promptText) {
       const apiKey = firebaseConfig.apiKey;
       const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
@@ -714,12 +713,10 @@
       }
     }
 
-    // Global Değişkenler
     window.db = db;
     window.askGeminiAPI = askGeminiAPI;
     window.firebaseModules = { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp };
     
-    // Uygulama Başlatma Tetikleyicisi
     if (window.startTravelApp) {
       window.startTravelApp();
     }
@@ -809,7 +806,7 @@
       "Russia 🇷🇺": ["MOSCOW", "SAINT PETERSBURG", "KAZAN", "SOCHI"],
       "Ukraine 🇺🇦": ["KYIV", "ODESA", "LVIV"],
       "Serbia 🇷🇸": ["BELGRADE"],
-      "Bosnia and Herzegovina 🇧🇦": ["SARAJEVO", "MOSTAR"],
+      "Bosnia and Herzegovina 🇦🇹": ["SARAJEVO", "MOSTAR"],
       "Albania 🇦🇱": ["TIRANA"],
       "North Macedonia 🇲🇰": ["SKOPJE", "OHRID"],
       "Montenegro 🇲🇪": ["KOTOR", "PODGORICA"],
@@ -828,104 +825,85 @@
         "travel_bug92", "caner_travels", "nomad_kris", "katya_spb", "santiago_go", 
         "phuket_surfer", "mert_bkk", "ozlem_explorer", "tom_globe", "serkan_istanbul",
         "elena_nomad", "alex_uk", "jake_surf_co", "selin_bali", "oleg_bali", "claire_travels",
-        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r"
+        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r",
+        "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      const replyTexts = [
-        "Thanks for the tip! Will definitely check it out.",
-        "Aynen katılıyorum, kesinlikle görülmesi gereken bir yer!",
-        "Do you have any cafe recommendations nearby?",
-        "Harika bir paylaşım, teşekkürler!",
-        "Is it better to visit during daytime or evening?",
-        "I was there last week, totally worth it!"
-      ];
+      const multilangTexts = {
+        en: [
+          "Hey everyone! Currently staying in the city center. Anyone up for a coffee or dinner tonight?",
+          "Just arrived here! What are the must-visit places for a 3-day trip?",
+          "Weather is amazing today. Who wants to join a walking tour around historical spots?",
+          "Looking for travel companions to explore local night markets this weekend!",
+          "Great vibes and awesome local food here. Highly recommend trying street vendors."
+        ],
+        tr: [
+          "Selamlar! Şu an şehir merkezindeyim, akşam kahve veya yemek için eşlik etmek isteyen var mı?",
+          "Yeni geldim sayılır, 3 günlük kısa bir tur için mutlaka görülmesi gereken yerler neresi?",
+          "Hava harika, tarihi yerleri birlikte gezmek isteyen gezginler mesaj atabilir mi?",
+          "Bu hafta sonu yerel gece pazarlarını ve sokak lezzetlerini keşfedecek arkadaş arıyorum!",
+          "Şehir gerçekten çok hareketli ve insanlar çok misafirperver. Kesinlikle tavsiye ederim."
+        ],
+        ru: [
+          "Всем привет! Кто сейчас здесь? Ищу компанию прогуляться по центру вечером.",
+          "Только что приехал! Посоветуйте хорошие и недорогие кафе поблизости.",
+          "Какая прекрасная погода! Кто хочет сгонять на экскурсию вместе?",
+          "Ищу попутчиков для поездки по местным достопримечательностям на выходных."
+        ]
+      };
 
-      for (let i = 1; i <= 35; i++) {
-        const author = usernames[i % usernames.length];
-        const day = String(Math.max(1, 28 - Math.floor(i / 1.5))).padStart(2, '0');
-        posts.push({
-          id: idCounter++,
-          city: 'BANGKOK',
-          text: i === 1 ? "Arrived in Bangkok yesterday and stayed around Sukhumvit. Street food at Soi 38 is top tier! Anyone up for a night market walk tonight?" : 
-                i === 2 ? "Bangkok'a ilk defa gelecekler: Havaalanında alt kattan Airport Rail Link trenine binin, taksi yerine çok ekonomik." :
-                `Bangkok expat & traveler note #${i}. Sukhumvit and Asok area is extremely active this week. Let's connect!`,
-          author: author,
-          date: `2026-10-${day}`,
-          replies: i === 1 ? [
-            { id: idCounter++, author: 'caner_travels', text: "Hey! I'm staying near BTS Asok. Let's grab a beer around 8 PM.", date: `2026-10-${day}` },
-            { id: idCounter++, author: 'nomad_kris', text: "I'm in for Jodd Fairs too!", date: `2026-10-${day}` }
-          ] : []
-        });
-      }
+      const replyPool = {
+        en: ["I'm down! Let me know where and when.", "Check out the old town area, totally worth it!", "Count me in for dinner!", "I was there yesterday, absolutely loved it."],
+        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmilisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
+        ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
+      };
 
-      for (let i = 1; i <= 30; i++) {
-        const day = String(Math.max(1, 27 - Math.floor(i / 1.2))).padStart(2, '0');
-        posts.push({
-          id: idCounter++,
-          city: 'DENPASAR',
-          text: i === 1 ? "Canggu traffic is getting insane around Batu Bolong, but cafes and sunset vibe are totally worth it." : 
-                `Bali nomad update #${i}. Scooter rental is a must around Canggu and Ubud. Great coworking spaces everywhere.`,
-          author: usernames[(i + 2) % usernames.length],
-          date: `2026-10-${day}`,
-          replies: i === 1 ? [{ id: idCounter++, author: 'santiago_go', text: "Echo beach surf session tomorrow morning?", date: `2026-10-${day}` }] : []
-        });
-      }
+      // 1. Popüler şehirleri 65-70 posta çıkar (BANGKOK, DENPASAR, TOKYO, LISBON, ISTANBUL, PHUKET vb.)
+      const superPopular = ['BANGKOK', 'DENPASAR', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
+      
+      superPopular.forEach(cityName => {
+        for (let i = 1; i <= 68; i++) {
+          const author = usernames[i % usernames.length];
+          const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
+          const textList = multilangTexts[langKey];
+          const text = textList[i % textList.length] + ` (#${i} meet-up)`;
+          
+          posts.push({
+            id: idCounter++,
+            city: cityName,
+            text: text,
+            author: author,
+            date: `2026-10-${String(Math.max(1, 29 - Math.floor(i / 3))).padStart(2, '0')}`,
+            replies: [
+              { id: idCounter++, author: usernames[(i + 5) % usernames.length], text: replyPool[langKey][0], date: `2026-10-25` },
+              { id: idCounter++, author: usernames[(i + 9) % usernames.length], text: replyPool[langKey][1], date: `2026-10-26` }
+            ]
+          });
+        }
+      });
 
-      for (let i = 1; i <= 22; i++) {
-        const day = String(Math.max(1, 25 - i)).padStart(2, '0');
-        posts.push({
-          id: idCounter++,
-          city: 'TOKYO',
-          text: `Tokyo exploration log #${i}. Suica card on Apple Wallet is a lifesaver for trains and 7-Eleven convenience stores.`,
-          author: usernames[(i + 4) % usernames.length],
-          date: `2026-10-${day}`,
-          replies: []
-        });
-      }
-
-      for (let i = 1; i <= 18; i++) {
-        const day = String(Math.max(1, 24 - i)).padStart(2, '0');
-        posts.push({
-          id: idCounter++,
-          city: 'LISBON',
-          text: `Lisbon city tip #${i}. Wear comfortable sneakers for Alfama hills and ride Tram 28!`,
-          author: usernames[(i + 1) % usernames.length],
-          date: `2026-10-${day}`,
-          replies: []
-        });
-      }
-
-      let cityIndex = 0;
+      // 2. Diğer tüm şehirler için 7-8 adet gerçekçi, yanıtlı yorum ekle (Türkçe, İngilizce ve Rusça karışık)
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
-          if (!['BANGKOK', 'DENPASAR', 'TOKYO', 'LISBON'].includes(cityName)) {
-            const targetCount = (cityIndex % 4) + 1; 
-
-            for (let k = 1; k <= targetCount; k++) {
-              const author = usernames[(cityIndex + k) % usernames.length];
-              const replyAuthor = usernames[(cityIndex + k + 3) % usernames.length];
-              const hasReply = k === 1 || targetCount > 2;
+          if (!superPopular.includes(cityName)) {
+            for (let k = 1; k <= 7; k++) {
+              const author = usernames[(cityName.length + k) % usernames.length];
+              const replyAuthor = usernames[(cityName.length + k + 4) % usernames.length];
+              const langKey = k === 3 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
+              const textList = multilangTexts[langKey];
 
               posts.push({
                 id: idCounter++,
                 city: cityName,
-                text: k === 1 ? `📍 Exploring ${cityName}! Great atmosphere, amazing food culture, and very friendly locals.` :
-                      k === 2 ? `${cityName} gezi tavsiyesi: Şehir merkezinde yürüyerek gezmek en doğrusu, ara sokaklar harika fotoğraf noktaları veriyor.` :
-                      k === 3 ? `Best spots for local coffee and sunset view in ${cityName}? Any recommendations?` :
-                      `Just arrived in ${cityName}! Weather is perfect and staying near the city center.`,
+                text: `${cityName} update #${k}: ` + textList[k % textList.length],
                 author: author,
-                date: `2026-10-${25 - (k * 2)}`,
-                replies: hasReply ? [
-                  {
-                    id: idCounter++,
-                    author: replyAuthor,
-                    text: replyTexts[(cityIndex + k) % replyTexts.length],
-                    date: `2026-10-${24 - (k * 2)}`
-                  }
-                ] : []
+                date: `2026-10-${String(Math.max(1, 26 - (k * 2))).padStart(2, '0')}`,
+                replies: [
+                  { id: idCounter++, author: replyAuthor, text: replyPool[langKey][0], date: `2026-10-24` },
+                  { id: idCounter++, author: usernames[(k + 7) % usernames.length], text: replyPool[langKey][1], date: `2026-10-25` }
+                ]
               });
             }
-            cityIndex++;
           }
         });
       }
@@ -1194,7 +1172,7 @@
         renderPopularCities();
       });
 
-      // 2. Gönderileri (Posts) Kontrol Et ve Boşsa Zengin Örnekleri Otomatik Ekle
+      // 2. Gönderileri (Posts) Kontrol Et ve Boşsa Yeni Zengin/Dilli Örnekleri Otomatik Ekle
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
       if (postsSnapshot.empty) {
@@ -1671,7 +1649,7 @@
     function openInbox() {
       if (!currentUser) return alert("Please log in to view inbox!");
       const list = document.getElementById('inboxMessagesList');
-      const myMsgs = messages.filter(m => m.to === currentUser.username);
+      const myMsgs = messages.files ? messages.files : messages.filter(m => m.to === currentUser.username);
       if (myMsgs.length === 0) {
         list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
       } else {
