@@ -785,7 +785,6 @@
       "Macau 🇲🇴": ["MACAU"],
       "Turkey 🇹🇷": ["ISTANBUL", "ANTALYA", "MUGLA", "EDIRNE"],
       "United Arab Emirates 🇦🇪": ["DUBAI", "ABU DHABI"],
-      // "Saudi Arabia 🇸🇦" listesinden MECCA ve gereksizler temizlendi / kontrol altında
       "Saudi Arabia 🇸🇦": ["JEDDAH", "RIYADH"],
       "France 🇫🇷": ["PARIS", "NICE", "LYON"],
       "Malaysia 🇲🇾": ["KUALA LUMPUR", "JOHOR BAHRU"],
@@ -854,20 +853,81 @@
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      const cleanBaliPosts = [
-        "Canggu tarafında coworking ve sörf için gelen var mı? Akşam sunset için Echo Beach'te olacağız.",
-        "Ubud'da orman manzaralı kafelerde çalışmak ve yoga seanslarına katılmak isteyen dijital göçebeler buraya!",
-        "Seminyak'ta harika mekanlar keşfettim, akşam yemeği ve plaj partisi için arkadaş arıyorum.",
-        "Uluwatu tapınak gezisi ve gün batımı dans gösterisi için yarın öğleden sonra takılmak isteyenler mesaj atsın.",
-        "Nusa Penida adasına günlük tur planlıyorum, bot biletini birlikte alıp masrafları bölüşecek 2 kişi arıyorum."
+      // BALI için özel, mantıklı, zengin ve birbirinden farklı 38 adet özgün gönderi
+      const detailedBaliPosts = [
+        "Canggu'da coworking alanında çalışıyorum, öğleden sonra Echo Beach'te sörf yapacak partner arıyorum.",
+        "Ubud'da orman içinde harika bir yoga kampındayım. Tapınak gezisi için yarın sabah katılmak isteyen var mı?",
+        "Seminyak sahilinde gün batımı eşliğinde akşam yemeği yiyeceğiz, eşlik etmek isteyen gezginler mesaj atabilir.",
+        "Uluwatu tapınakındaki Kecak dansı gösterisi için bilet alacağım, birlikte gidecek 2 kişi arıyorum.",
+        "Nusa Penida adasına sürat botuyla günübirlik geçiş yapacağız. Masrafları paylaşmak için harika bir fırsat!",
+        "Mount Batur zirvesine gün doğumu tırmanışı için rehberli tur ayarladık, gece yarısı otelden çıkıyoruz gelen var mı?",
+        "Sanur sahilinde sakin bir yürüyüş ve lokal deniz ürünleri restoranı için akşam buluşalım.",
+        "Canggu şık kafelerinde kahve molası ve remote work seansı yapmak isteyen dijital göçebeler yazsın.",
+        "Tegallalang pirinç teraslarında fotoğraf çekimi ve salıncak turu planlıyorum, araç kiralayacağız.",
+        "Jimbaran sahirlinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
+        "Bedugul'deki Ulun Danu Beratan tapınağına kuzey turu yapacağız, arabada 2 kişilik boş yerimiz var.",
+        "Amed'de şnorkel ve serbest dalış (freedive) noktalarını keşfedecek su altı tutkunu arıyorum.",
+        "Sidemen vadisinde yeşillikler içinde huzurlu bir yürüyüş ve köy turu yapmak isteyenler buraya.",
+        "Pererenan bölgesinde yeni açılan lokal bir vegan restoranda akşam yemeği buluşması yapıyoruz.",
+        "Lovina'da sabah erken saatlerde yunus izleme bot turu için ortak arıyorum.",
+        "Kuta'da sörf tahtası kiralayıp dalgalarla boğuşmak isteyen acemiler ve bilenler toplansın!",
+        "Denpasar geleneksel sanat pazarından hediyelik eşya alışverişi yaparken pazarlık yapmama yardım edecek var mı?",
+        "Canggu'daki popüler beach club'larda hafta sonu partisi için ekip kuruyoruz.",
+        "Ubud kraliyet sarayı ve geleneksel pazarı gezisi sonrası lokal warung'da öğle yemeği.",
+        "Bali'nin gizli şelalelerini (Gitgit & Sekumpul) motosikletle keşif turu düzenliyoruz.",
+        "Batur dağı eteklerinde doğal kaplıcalarda (hot springs) yorgunluk atmak paha biçilmez olacak.",
+        "Melasti beach cliff yolunda muhteşem gün batımı manzarası izlemek için akşamüstü buluşalım.",
+        "Bali bitki çayları ve Luwak kahvesi tadımı için bir plantasyon turuna katılıyorum, gelen var mı?",
+        "Green School ve çevresindeki ekolojik projeleri ziyaret etmek isteyen çevre dostu gezginler?",
+        "Canggu'daki popüler paten parkı ve skate sahnesini izlemek için akşamüstü takılmacası.",
+        "Sanur limanından Gili adalarına geçiş yapacak olan var mı? Biletleri birlikte organize edelim.",
+        "Ubud'da geleneksel bir balili dans kursuna veya el sanatları atölyesine katılan oldu mu?",
+        "Bali sokak lezzetlerini (Nasi Goreng & Babi Guling) en hijyenik ve lezzetli yiyeceğimiz yer arayışı.",
+        "Ceningan ve Lembongan adalarına hafta sonu kaçamağı için bot bileti ve konaklama ayarlıyoruz.",
+        "Pura Lempuyang (Cennetin Kapısı) erken sabah fotoğraf çekimi için gece yola çıkıyoruz.",
+        "Bali geleneksel şifacı (Balian) ziyareti ve meditasyon seansı hakkında bilgi sahibi olan var mı?",
+        "Berawa sahilinde akşam yürüyüşü ve ardından akustik canlı müzik dinletisi olan bir mekana geçeceğiz.",
+        "Bali'de uzun dönem kalacak dijital göçebeler için villa paylaşımı veya ortak yaşam üzerine sohbet.",
+        "Taman Ayun tapınağı ve UNESCO kültür mirası su tapınakları turu için rehberli araç paylaşımı.",
+        "Nyepi (Sessizlik Günü) öncesi Ogod-Ogod geçit törenlerini izlemek için harika bir akşam planı.",
+        "Echo beach'te gün batımı sörfü sonrası sahilde hindistan cevizi eşliğinde sohbet seansı.",
+        "Bali'nin kuzeyinde dolunay seremonisine (Full Moon ceremony) local bir tapınakta katılım.",
+        "Kampung foreigner dostu mekanlarda akşam çalışma ve networking buluşması."
       ];
 
-      const cleanBangkokPosts = [
-        "Sukhumvit civarındayım, akşam sokak yemeklerini denemek ve gece pazarına gitmek isteyen var mı?",
-        "Khaosan Road civarında hareketli bir akşam geçirmek için eşlikçi arıyorum.",
-        "Grand Palace ve Wat Arun tapınaklarını yarın sabah birlikte gezelim mi?",
-        "IconSiam civarında nehir kenarında akşam kahvesi içmek isteyenler yazabilir."
-      ];
+      // Endonezya'daki diğer şehirlere (Jakarta, Surabaya, Bandung, Yogyakarta, Medan, Lombok) 3-4'er adet özel yorum
+      const otherIndoCityPosts = {
+        "JAKARTA": [
+          "Jakarta'da Kota Tua bölgesinde tarihi bisiklet turu ve kafe molası için kimler var?",
+          "Grand Indonesia alışveriş merkezi civarındayım, akşam street food denemek isteyen yazabilir.",
+          "Thousand Islands (Kepulauan Seribu) için bu hafta sonu sürat botu organizasyonu yapıyoruz."
+        ],
+        "SURABAYA": [
+          "Surabaya'da tarihi Red Bridge ve House of Sampoerna müzesini gezecek arkadaş arıyorum.",
+          "Madura köprüsü üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
+          "Surabaya'nın meşhur Rawon çorbasını en iyi yapan esnaf lokantasını keşfe çıkıyoruz."
+        ],
+        "BANDUNG": [
+          "Bandung'un serin dağ havasında Tangkuban Perahu yanardağını ziyaret edeceğiz, araçta yer var.",
+          "Ciater sıcak su kaynaklarında hafta sonu dinlenmek ve doğa yürüyüşü yapmak isteyenler?",
+          "Jalan Braga caddesindeki tarihi kafelerde akşam kahvesi ve sohbet buluşması."
+        ],
+        "YOGYAKARTA": [
+          "Yogyakarta'da Borobudur ve Prambanan tapınakları gün doğumu turu için ortak arıyorum.",
+          "Malioboro caddesinde gece yürüyüşü ve geleneksel Gudeg tatlısı denemesi yapıyoruz.",
+          "Merapi yanardağı eteklerinde jeep safari turu için ekibe 2 kişi daha arıyoruz."
+        ],
+        "MEDAN": [
+          "Medan'dan Bukit Lawang'daki orangutan koruma alanına orman trekking turu planlıyorum.",
+          "Lake Toba (Toba Gölü) ve Samosir adasına hafta sonu kaçamağı için otobüs bileti alacağız.",
+          "Medan'ın meşhur durian meyvesini ve lokal kahvelerini tatmak için akşam buluşması."
+        ],
+        "LOMBOK": [
+          "Lombok'tan Gili Adaları'na geçiş yapıyorum, şnorkel ve dalış için harika bir gün olacak.",
+          "Kuta Lombok'ta muhteşem sörf plajlarını scooter ile keşfetmek isteyen gezgin var mı?",
+          "Rinjani dağı tırmanışı öncesi Senaru şelalelerinde kamp kurup hazırlık yapıyoruz."
+        ]
+      };
 
       const multilangTexts = {
         en: [
@@ -901,21 +961,20 @@
       const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
-        for (let i = 0; i < 35; i++) {
+        const loopCount = (cityName === 'BALI') ? detailedBaliPosts.length : 35;
+        for (let i = 0; i < loopCount; i++) {
           const author = usernames[i % usernames.length];
           const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
           
           let text = "";
-          if (cityName === 'BALI' && i < cleanBaliPosts.length) {
-            text = cleanBaliPosts[i];
-          } else if (cityName === 'BANGKOK' && i < cleanBangkokPosts.length) {
-            text = cleanBangkokPosts[i];
+          if (cityName === 'BALI') {
+            text = detailedBaliPosts[i];
           } else {
             const textList = multilangTexts[langKey];
             text = textList[i % textList.length] + ` (Meet-up #${i + 1})`;
           }
           
-          const hoursAgo = (i * 4) + 1;
+          const hoursAgo = (i * 3) + 1;
           const postDate = new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString();
 
           posts.push({
@@ -935,17 +994,22 @@
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
           if (!superPopular.includes(cityName)) {
-            for (let k = 1; k <= 4; k++) {
+            const specificPosts = (country === "Indonesia 🇮🇩" && otherIndoCityPosts[cityName]) ? otherIndoCityPosts[cityName] : null;
+            const postLimit = specificPosts ? specificPosts.length : 4;
+
+            for (let k = 0; k < postLimit; k++) {
               const author = usernames[(cityName.length + k) % usernames.length];
               const replyAuthor = usernames[(cityName.length + k + 4) % usernames.length];
-              const langKey = k === 3 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
+              const langKey = k === 2 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
               const textList = multilangTexts[langKey];
-              const hoursAgo = k * 12;
+              const hoursAgo = (k + 1) * 10;
+
+              const textContent = specificPosts ? specificPosts[k] : `${cityName} update #${k + 1}: ` + textList[k % textList.length];
 
               posts.push({
                 id: idCounter++,
                 city: cityName,
-                text: `${cityName} update #${k}: ` + textList[k % textList.length],
+                text: textContent,
                 author: author,
                 date: new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString(),
                 replies: [
@@ -1202,7 +1266,6 @@
       const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // Şehirleri kalıcı hale getirmek için localStorage kontrolü ekliyoruz (Böylece silinenler/değişenler geri gelmez)
       const savedCitiesJson = localStorage.getItem('travel_friend_cities_v2');
       if (savedCitiesJson) {
         citiesData = JSON.parse(savedCitiesJson);
@@ -1214,7 +1277,6 @@
       renderSidebar();
       renderPopularCities();
 
-      // 2. Gönderileri Kontrol Et ve Temizlenmiş Paketleri Yükle
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
@@ -1246,7 +1308,6 @@
         renderFeed();
       });
 
-      // 3. Kullanıcıları Dinle
       const usersRef = collection(db, "users");
       const usersSnap = await getDocs(usersRef);
       if (usersSnap.empty) {
@@ -1259,7 +1320,6 @@
         snapshot.forEach((docSnap) => users.push({ id: docSnap.id, ...docSnap.data() }));
       });
 
-      // 4. Bekleyen Şehirleri Dinle
       const pendingRef = collection(db, "pendingCities");
       onSnapshot(pendingRef, (snapshot) => {
         pendingCities = [];
@@ -1267,7 +1327,6 @@
         updatePendingBadge();
       });
 
-      // 5. Canlı Sohbet Mesajlarını Dinle
       const chatRef = collection(db, "liveChat");
       const qChat = query(chatRef, orderBy("timestamp", "asc"));
       onSnapshot(qChat, (snapshot) => {
@@ -1276,7 +1335,6 @@
         renderLiveChat();
       });
 
-      // 6. Özel Mesajları Dinle
       const msgRef = collection(db, "messages");
       onSnapshot(msgRef, (snapshot) => {
         messages = [];
@@ -1735,7 +1793,6 @@
       const d = dict[currentLang] || dict['EN'];
       let filteredPosts = posts.filter(p => p.city === selectedCity);
 
-      // YENİDEN ESKİYE SIRALAMA
       filteredPosts.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
 
       document.getElementById('currentFeedTitle').innerText = `${selectedCity} - ${d.posts}`;
