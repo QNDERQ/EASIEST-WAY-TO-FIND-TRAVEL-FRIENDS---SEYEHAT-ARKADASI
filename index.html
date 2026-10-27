@@ -342,6 +342,9 @@
       background: #ffffff;
       border: 1px solid var(--border-color);
       border-radius: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
     .chat-username-clickable {
       font-weight: 700;
@@ -417,7 +420,7 @@
       margin-bottom: 1rem;
     }
 
-    .post-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; }
+    .post-header { display: flex; justify-content: space-between; margin-bottom: 0.8rem; align-items: flex-start; }
     .author-info { display: flex; align-items: center; gap: 0.6rem; }
     .author-name { font-weight: 700; font-size: 0.95rem; }
 
@@ -434,9 +437,10 @@
       justify-content: flex-end;
       border-top: 1px solid var(--border-color);
       padding-top: 0.8rem;
+      align-items: center;
     }
 
-    .btn-reply, .btn-dm {
+    .btn-reply, .btn-dm, .btn-delete-post {
       border: none;
       padding: 0.4rem 0.8rem;
       border-radius: 6px;
@@ -453,6 +457,8 @@
     .btn-dm { background: #eff6ff; color: var(--primary); }
     .btn-dm:hover { background: #dbeafe; }
     .btn-dm.disabled { background: #f1f5f9; color: #94a3b8; cursor: not-allowed; }
+    .btn-delete-post { background: #fee2e2; color: #ef4444; }
+    .btn-delete-post:hover { background: #fecaca; }
 
     .replies-container {
       margin-top: 1rem;
@@ -847,14 +853,19 @@
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      // Bangkok ve diğer şehirler için özgün, tekrarsız ve kaliteli seyahat cümleleri
-      const uniqueBankokPosts = [
-        "Bangkok expat & traveler note #20. Sukhumvit and Asok area is extremely active this week. Let's connect!",
-        "Khaosan Road civarındayım, akşam sokak yemeklerini denemek ve biraz tur atmak isteyen var mı?",
-        "Anyone heading to Chatuchak Weekend Market tomorrow morning? Looking for company!",
-        "湄南河 (Chao Phraya) turu ve Wat Arun ziyareti için öğleden sonra 2-3 kişi arıyorum.",
-        "Bangkok'ta Rooftop bar akşamı planlıyoruz, katılmak isteyenler mesaj atabilir.",
-        "Bugün IconSiam tarafındayım. Akşam yemek ve nehir kenarı yürüyüşü için kimler geliyor?"
+      const cleanBaliPosts = [
+        "Canggu tarafında coworking ve sörf için gelen var mı? Akşam sunset için Echo Beach'te olacağız.",
+        "Ubud'da orman manzaralı kafelerde çalışmak ve yoga seanslarına katılmak isteyen dijital göçebeler buraya!",
+        "Seminyak'ta harika mekanlar keşfettim, akşam yemeği ve plaj partisi için arkadaş arıyorum.",
+        " Uluwatu tapınak gezisi ve gün batımı dans gösterisi için yarın öğleden sonra takılmak isteyenler mesaj atsın.",
+        "Nusa Penida adasına günlük tur planlıyorum, bot biletini birlikte alıp masrafları bölüşecek 2 kişi arıyorum."
+      ];
+
+      const cleanBangkokPosts = [
+        "Sukhumvit civarındayım, akşam sokak yemeklerini denemek ve gece pazarına gitmek isteyen var mı?",
+        "Khaosan Road civarında hareketli bir akşam geçirmek için eşlikçi arıyorum.",
+        "Grand Palace ve Wat Arun tapınaklarını yarın sabah birlikte gezelim mi?",
+        "IconSiam civarında nehir kenarında akşam kahvesi içmek isteyenler yazabilir."
       ];
 
       const multilangTexts = {
@@ -889,28 +900,32 @@
       const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
-        const countLimit = (cityName === 'BANGKOK') ? uniqueBankokPosts.length : 15;
-        for (let i = 0; i < 45; i++) {
+        for (let i = 0; i < 35; i++) {
           const author = usernames[i % usernames.length];
           const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
           
           let text = "";
-          if (cityName === 'BANGKOK' && i < uniqueBankokPosts.length) {
-            text = uniqueBankokPosts[i];
+          if (cityName === 'BALI' && i < cleanBaliPosts.length) {
+            text = cleanBaliPosts[i];
+          } else if (cityName === 'BANGKOK' && i < cleanBangkokPosts.length) {
+            text = cleanBangkokPosts[i];
           } else {
             const textList = multilangTexts[langKey];
             text = textList[i % textList.length] + ` (Meet-up #${i + 1})`;
           }
           
+          const hoursAgo = (i * 4) + 1;
+          const postDate = new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString();
+
           posts.push({
             id: idCounter++,
             city: cityName,
             text: text,
             author: author,
-            date: `2026-10-${String(Math.max(1, 29 - Math.floor(i / 2))).padStart(2, '0')}`,
+            date: postDate,
             replies: [
-              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: `2026-10-25` },
-              { id: idCounter++, author: usernames[(i + 7) % usernames.length], text: replyPool[langKey][1], date: `2026-10-26` }
+              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 1) * 3600 * 1000).toISOString() },
+              { id: idCounter++, author: usernames[(i + 7) % usernames.length], text: replyPool[langKey][1], date: new Date(Date.now() - (hoursAgo - 2) * 3600 * 1000).toISOString() }
             ]
           });
         }
@@ -919,21 +934,21 @@
       for (const [country, cityList] of Object.entries(initialCitiesData)) {
         cityList.forEach((cityName) => {
           if (!superPopular.includes(cityName)) {
-            for (let k = 1; k <= 5; k++) {
+            for (let k = 1; k <= 4; k++) {
               const author = usernames[(cityName.length + k) % usernames.length];
               const replyAuthor = usernames[(cityName.length + k + 4) % usernames.length];
               const langKey = k === 3 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
               const textList = multilangTexts[langKey];
+              const hoursAgo = k * 12;
 
               posts.push({
                 id: idCounter++,
                 city: cityName,
                 text: `${cityName} update #${k}: ` + textList[k % textList.length],
                 author: author,
-                date: `2026-10-${String(Math.max(1, 26 - (k * 2))).padStart(2, '0')}`,
+                date: new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString(),
                 replies: [
-                  { id: idCounter++, author: replyAuthor, text: replyPool[langKey][0], date: `2026-10-24` },
-                  { id: idCounter++, author: usernames[(k + 7) % usernames.length], text: replyPool[langKey][1], date: `2026-10-25` }
+                  { id: idCounter++, author: replyAuthor, text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 2) * 3600 * 1000).toISOString() }
                 ]
               });
             }
@@ -1317,14 +1332,20 @@
       } else {
         let html = '';
         pendingCities.forEach(item => {
-          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem;"><div><strong>📍 ${item.city}</strong><div style="font-size:0.8rem; color:var(--text-muted);">${item.country} (Author: ${item.author})</div></div><div><button class="btn-submit" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="approveCity('${item.firestoreId}')">Approve</button></div></div>`;
+          html += `<div style="display:flex; justify-content:space-between; align-items:center; padding: 0.6rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.4rem;">
+            <div><strong>📍 ${item.city}</strong><div style="font-size:0.8rem; color:var(--text-muted);">${item.country} (Author: ${item.author})</div></div>
+            <div style="display:flex; gap:6px;">
+              <button class="btn-submit" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="approveCity('${item.firestoreId}')">Approve</button>
+              <button class="btn-delete-post" style="padding:0.3rem 0.7rem; font-size:0.8rem;" onclick="rejectCity('${item.firestoreId}')">Reject</button>
+            </div>
+          </div>`;
         });
         list.innerHTML = html;
       }
       document.getElementById('adminModal').classList.add('active');
     }
 
-    function closeAdminModal() { document.getElementById('adminModal').classList.remove('active'); }
+    function closeAdminModal() { document.getElementById('adminModal').classList.add ? document.getElementById('adminModal').classList.remove('active') : null; }
 
     async function approveCity(firestoreId) {
       const { deleteDoc, doc, addDoc, collection } = window.firebaseModules;
@@ -1339,6 +1360,14 @@
         openAdminModal();
         alert("City approved!");
       }
+    }
+
+    async function rejectCity(firestoreId) {
+      const { deleteDoc, doc } = window.firebaseModules;
+      if (!confirm("Are you sure you want to reject and delete this city request?")) return;
+      await deleteDoc(doc(window.db, "pendingCities", firestoreId));
+      openAdminModal();
+      alert("City request rejected and removed.");
     }
 
     async function deleteCity(country, city, event) {
@@ -1562,10 +1591,18 @@
           ? `<span>${m.author}:</span>` 
           : `<span class="chat-username-clickable" onclick="handleChatUserClick('${m.author}')" title="Click to message ${m.author}">${m.author}:</span>`;
 
-        html += `<div class="chat-msg-item">${authorDisplay} ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); float:right;">${m.time || ''}</span></div>`;
+        const deleteChatBtn = (currentUser && currentUser.isAdmin) ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteChatMessage('${m.firestoreId}')"><i class="fa-solid fa-trash"></i></button>` : '';
+
+        html += `<div class="chat-msg-item"><div>${authorDisplay} ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); margin-left:8px;">${m.time || ''}</span></div> ${deleteChatBtn}</div>`;
       });
       container.innerHTML = html;
       container.scrollTop = container.scrollHeight;
+    }
+
+    async function deleteChatMessage(firestoreId) {
+      if (!confirm("Delete this chat message?")) return;
+      const { deleteDoc, doc } = window.firebaseModules;
+      await deleteDoc(doc(window.db, "liveChat", firestoreId));
     }
 
     function handleChatUserClick(authorName) {
@@ -1630,7 +1667,7 @@
         city: selectedCity,
         text,
         author: currentUser.username,
-        date: new Date().toISOString().split('T')[0],
+        date: new Date().toISOString(),
         replies: []
       });
 
@@ -1651,13 +1688,43 @@
       const post = posts.find(p => p.firestoreId === postId || p.id === postId);
       if (post) {
         if (!post.replies) post.replies = [];
-        post.replies.push({ id: Date.now(), author: currentUser.username, text, date: new Date().toISOString().split('T')[0] });
+        post.replies.push({ id: Date.now(), author: currentUser.username, text, date: new Date().toISOString() });
         
         const { updateDoc, doc } = window.firebaseModules;
         if (post.firestoreId) {
           await updateDoc(doc(window.db, "posts", post.firestoreId), { replies: post.replies });
         }
         renderFeed();
+      }
+    }
+
+    async function deletePost(postId) {
+      if (!confirm("Are you sure you want to delete this post?")) return;
+      const { deleteDoc, doc } = window.firebaseModules;
+      await deleteDoc(doc(window.db, "posts", postId));
+    }
+
+    async function deleteReply(postId, replyId) {
+      if (!confirm("Delete this reply?")) return;
+      const post = posts.find(p => p.firestoreId === postId || p.id === postId);
+      if (post && post.replies) {
+        post.replies = post.replies.filter(r => r.id !== replyId);
+        const { updateDoc, doc } = window.firebaseModules;
+        if (post.firestoreId) {
+          await updateDoc(doc(window.db, "posts", post.firestoreId), { replies: post.replies });
+        }
+        renderFeed();
+      }
+    }
+
+    function formatTime(isoString) {
+      if (!isoString) return '';
+      try {
+        const d = new Date(isoString);
+        if (isNaN(d.getTime())) return isoString;
+        return d.toLocaleDateString() + ' ' + d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      } catch (e) {
+        return isoString;
       }
     }
 
@@ -1671,6 +1738,9 @@
       const d = dict[currentLang] || dict['EN'];
       let filteredPosts = posts.filter(p => p.city === selectedCity);
 
+      // YENİDEN ESKİYE SIRALAMA (Newest to Oldest)
+      filteredPosts.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0));
+
       document.getElementById('currentFeedTitle').innerText = `${selectedCity} - ${d.posts}`;
       document.getElementById('postCountBadge').innerText = `${filteredPosts.length} ${d.postCount}`;
 
@@ -1683,8 +1753,42 @@
       filteredPosts.forEach(post => {
         const canDmPostAuthor = hasUserRepliedToPost(post, post.author);
         const isSelfPost = currentUser && post.author === currentUser.username;
+        const isAdmin = currentUser && currentUser.isAdmin;
         const pId = post.firestoreId || post.id;
-        html += `<div class="post-card"><div class="post-header"><div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div><span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${post.date}</span></div><div class="post-content">${post.text}</div><div class="post-footer"><button class="btn-reply" onclick="toggleReplyForm('${pId}')"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}</div><div class="reply-form" id="reply-form-${pId}"><textarea id="reply-input-${pId}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea><div style="display:flex; justify-content:flex-end;"><button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply('${pId}')">${d.replyBtn}</button></div></div>${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => `<div class="reply-card"><div style="display:flex; justify-content:space-between; margin-bottom:0.3rem;"><span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${currentUser && r.author === currentUser.username ? '(You)' : ''}</span><span style="font-size:0.75rem; color:var(--text-muted);">${r.date}</span></div><div style="font-size:0.9rem;">${r.text}</div></div>`).join('')}</div>` : ''}</div>`;
+
+        html += `<div class="post-card">
+          <div class="post-header">
+            <div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div>
+            <div style="display:flex; align-items:center; gap: 8px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${formatTime(post.date)}</span>
+              ${(isAdmin || isSelfPost) ? `<button class="btn-delete-post" onclick="deletePost('${pId}')" title="Delete Post"><i class="fa-solid fa-trash"></i></button>` : ''}
+            </div>
+          </div>
+          <div class="post-content">${post.text}</div>
+          <div class="post-footer">
+            <button class="btn-reply" onclick="toggleReplyForm('${pId}')"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>
+            ${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}
+          </div>
+          <div class="reply-form" id="reply-form-${pId}">
+            <textarea id="reply-input-${pId}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply('${pId}')">${d.replyBtn}</button>
+            </div>
+          </div>
+          ${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => {
+            const isSelfReply = currentUser && r.author === currentUser.username;
+            return `<div class="reply-card">
+              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; align-items:center;">
+                <span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${isSelfReply ? '(You)' : ''}</span>
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <span style="font-size:0.75rem; color:var(--text-muted);">${formatTime(r.date)}</span>
+                  ${(isAdmin || isSelfReply) ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteReply('${pId}', ${r.id})" title="Delete Reply"><i class="fa-solid fa-trash"></i></button>` : ''}
+                </div>
+              </div>
+              <div style="font-size:0.9rem;">${r.text}</div>
+            </div>`;
+          }).join('')}</div>` : ''}
+        </div>`;
       });
       container.innerHTML = html;
     }
@@ -1728,10 +1832,23 @@
         list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
       } else {
         let html = '';
-        myMsgs.forEach(m => { html += `<div style="padding: 0.60rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem;"><strong>From: ${m.from}</strong><p style="font-size:0.9rem; margin: 0.2rem 0;">${m.text}</p><span style="font-size: 0.75rem; color:var(--text-muted);">${m.date}</span></div>`; });
+        myMsgs.forEach(m => { 
+          const isAdmin = currentUser && currentUser.isAdmin;
+          html += `<div style="padding: 0.60rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem; display:flex; justify-content:space-between; align-items:flex-start;">
+            <div><strong>From: ${m.from}</strong><p style="font-size:0.9rem; margin: 0.2rem 0;">${m.text}</p><span style="font-size: 0.75rem; color:var(--text-muted);">${m.date}</span></div>
+            ${isAdmin ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteInboxMessage('${m.firestoreId}')"><i class="fa-solid fa-trash"></i></button>` : ''}
+          </div>`; 
+        });
         list.innerHTML = html;
       }
       document.getElementById('inboxModal').classList.add('active');
+    }
+
+    async function deleteInboxMessage(firestoreId) {
+      if (!confirm("Delete this message?")) return;
+      const { deleteDoc, doc } = window.firebaseModules;
+      await deleteDoc(doc(window.db, "messages", firestoreId));
+      openInbox();
     }
 
     function closeInbox() { document.getElementById('inboxModal').classList.remove('active'); }
