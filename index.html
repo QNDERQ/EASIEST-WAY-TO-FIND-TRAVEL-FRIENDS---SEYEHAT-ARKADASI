@@ -676,11 +676,10 @@
     </div>
   </div>
 
-  <!-- Firebase ve Gemini Modül Entegrasyonu (Sürüm 10.12.0) -->
+  <!-- Firebase ve Gemini API Entegrasyonu (Vertex AI modülü kaldırıldı, doğrudan REST API fetch kullanılıyor) -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
     import { getFirestore, collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    import { getVertexAI, getGenerativeModel } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-vertexai.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyC52CorXLQ7ptg0opomthHImJfVxVxlBsxY",
@@ -695,13 +694,29 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
-    // Vertex AI / Gemini Tanımlaması
-    const vertexAI = getVertexAI(app);
-    const model = getGenerativeModel(vertexAI, { model: "gemini-1.5-flash" });
+    // Gemini API için Doğrudan Fetch Fonksiyonu (CORS / MIME hatalarını kökten çözer)
+    async function askGeminiAPI(promptText) {
+      const apiKey = firebaseConfig.apiKey;
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+      try {
+        const response = await fetch(url, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: promptText }] }]
+          })
+        });
+        const data = await response.json();
+        return data.candidates?.[0]?.content?.parts?.[0]?.text || "No response from AI.";
+      } catch (err) {
+        console.error("Gemini API Error:", err);
+        return "Sorry, I couldn't process your request right now.";
+      }
+    }
 
     // Global Değişkenler
     window.db = db;
-    window.model = model;
+    window.askGeminiAPI = askGeminiAPI;
     window.firebaseModules = { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot, serverTimestamp };
     
     // Uygulama Başlatma Tetikleyicisi
@@ -1535,9 +1550,7 @@
 
       if (text.toLowerCase().includes("@gemini") || text.includes("?")) {
         try {
-          const result = await window.model.generateContent(text);
-          const response = await result.response;
-          const aiReply = response.text();
+          const aiReply = await window.askGeminiAPI(text);
 
           await addDoc(chatRef, {
             author: "🤖 Gemini AI Assistant",
