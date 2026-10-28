@@ -246,7 +246,7 @@
       flex: 1;
       padding: 2rem;
       display: grid;
-      grid-template-columns: 1fr 380px;
+      grid-template-columns: 1fr 400px;
       gap: 2rem;
       align-items: start;
     }
@@ -343,6 +343,9 @@
       border-radius: 16px;
       padding: 1.2rem;
       box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.08);
+      display: flex;
+      flex-direction: column;
+      height: 520px; /* Sabit ideal yükseklik - Yazma alanı her zaman görünür */
     }
 
     .chat-header-flex {
@@ -352,6 +355,7 @@
       margin-bottom: 0.8rem;
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 0.6rem;
+      flex-shrink: 0;
     }
 
     .chat-badge-ai {
@@ -367,7 +371,7 @@
     }
 
     .chat-messages-container {
-      height: 680px; /* Sohbet penceresi aşağıya doğru uzatıldı */
+      flex: 1;
       overflow-y: auto;
       border: 1px solid var(--border-color);
       border-radius: 10px;
@@ -413,6 +417,7 @@
       padding: 0.3rem;
       border: 1px solid var(--border-color);
       border-radius: 10px;
+      flex-shrink: 0;
     }
 
     .chat-input-area input {
