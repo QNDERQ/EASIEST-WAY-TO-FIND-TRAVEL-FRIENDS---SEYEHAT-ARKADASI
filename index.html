@@ -593,7 +593,7 @@
   </header>
 
   <div class="container">
-    <aside>
+    aside>
       <div class="search-box">
         <i class="fa-solid fa-search"></i>
         <input type="text" id="citySearchInput" oninput="filterCityList()" placeholder="Search country or city...">
@@ -817,9 +817,11 @@
       "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
     ];
 
+    // TÜM ŞEHİRLER DOĞRUDAN KODA GÖMÜLDÜ (VERİTABANI BAĞIMLILIĞI KALDIRILDI)
     const initialCitiesData = {
       "Thailand 🇹🇭": ["BANGKOK", "PHUKET", "PATTAYA", "KRABI", "CHIANG MAI"],
       "Indonesia 🇮🇩": ["BALI", "JAKARTA", "SURABAYA", "BANDUNG", "YOGYAKARTA", "MEDAN", "LOMBOK"],
+      "Japan 🇯🇵": ["TOKYO", "OSAKA", "KYOTO"],
       "Singapore 🇸🇬": ["SINGAPORE"],
       "China 🇨🇳": ["HONG KONG", "SHENZHEN", "GUANGZHOU", "SHANGHAI", "BEIJING", "CHENGDU", "HANGZHOU"],
       "United Kingdom 🇬🇧": ["LONDON", "EDINBURGH"],
@@ -831,7 +833,6 @@
       "Malaysia 🇲🇾": ["KUALA LUMPUR", "JOHOR BAHRU"],
       "United States 🇺🇸": ["NEW YORK", "LAS VEGAS", "MIAMI", "LOS ANGELES", "SAN FRANCISCO", "ORLANDO", "HONOLULU"],
       "Italy 🇮🇹": ["ROME", "MILAN", "VENICE", "FLORENCE"],
-      "Japan 🇯🇵": ["TOKYO", "OSAKA", "KYOTO"],
       "Taiwan 🇹🇼": ["TAIPEI", "TAICHUNG"],
       "Czech Republic 🇨🇿": ["PRAGUE"],
       "Spain 🇪🇸": ["BARCELONA", "MADRID", "SEVILLE"],
@@ -1232,20 +1233,15 @@
       const { collection, addDoc, getDocs, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      const savedCitiesJson = localStorage.getItem('travel_friend_cities_v5');
-      if (savedCitiesJson) {
-        citiesData = JSON.parse(savedCitiesJson);
-      } else {
-        citiesData = initialCitiesData;
-        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
-      }
+      // ŞEHİR LİSTESİNİ DOĞRUDAN KOD LİSTESİNDEN ALIR
+      citiesData = initialCitiesData;
 
       renderSidebar();
 
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
-      // EĞER BALİ İÇİN YAZI AZSA/YOKSA TEK SEFERLİK ÖRNEK YORUMLARI EKLER
+      // EĞER BALİ İÇİN YAZI AZSA TEK SEFERLİK ÖRNEK YORUMLARI EKLER
       let baliPostCount = 0;
       postsSnapshot.forEach(docSnap => {
         if (docSnap.data().city === "BALI") baliPostCount++;
@@ -1334,7 +1330,6 @@
         } else {
           citiesData[country] = [formattedCity];
         }
-        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         selectCity(formattedCity);
         closeAddCityModal();
         alert("City added successfully!");
@@ -1377,7 +1372,6 @@
         if (!citiesData[item.country]) citiesData[item.country] = [];
         if (!citiesData[item.country].includes(item.city)) {
           citiesData[item.country].push(item.city);
-          localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         }
         await deleteDoc(doc(window.db, "pendingCities", firestoreId));
         openAdminModal();
@@ -1401,8 +1395,6 @@
       
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
-      
-      localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
 
       if (selectedCity === city) {
         const firstCategory = Object.keys(citiesData)[0];
@@ -1430,7 +1422,6 @@
       const index = citiesData[country].indexOf(oldName);
       if (index !== -1) {
         citiesData[country][index] = newName;
-        localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
         posts.forEach(p => { if (p.city === oldName) p.city = newName; });
         if (selectedCity === oldName) selectedCity = newName;
         closeEditCityModal();
