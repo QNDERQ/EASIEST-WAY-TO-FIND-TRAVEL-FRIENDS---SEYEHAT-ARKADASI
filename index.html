@@ -593,7 +593,7 @@
   </header>
 
   <div class="container">
-    aside>
+    <aside>
       <div class="search-box">
         <i class="fa-solid fa-search"></i>
         <input type="text" id="citySearchInput" oninput="filterCityList()" placeholder="Search country or city...">
@@ -814,10 +814,9 @@
       "Qatar 🇶🇦",
       "Romania 🇷🇴", "Russia 🇷🇺", "Rwanda 🇷🇼", "Saint Kitts and Nevis 🇰🇳", "Saint Lucia 🇱🇨", "Saint Vincent and the Grenadines 🇻🇨", "Samoa 🇼🇸", "San Marino 🇸🇲", "Sao Tome and Principe 🇸🇹", "Saudi Arabia 🇸🇦", "Senegal 🇸🇳", "Serbia 🇷🇸", "Seychelles 🇸🇨", "Sierra Leone 🇸🇱", "Singapore 🇸🇬", "Slovakia 🇸🇰", "Slovenia 🇸🇮", "Solomon Islands 🇸🇧", "Somalia 🇸🇴", "South Africa 🇿🇦", "South Sudan 🇸🇸", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sudan 🇸🇩", "Suriname 🇸🇷", "Sweden 🇸🇪", "Switzerland 🇨🇭", "Syria 🇸🇾",
       "Taiwan 🇹🇼", "Tajikistan 🇹🇯", "Tanzania 🇹🇿", "Thailand 🇹🇭", "Timor-Leste 🇹🇱", "Togo 🇹🇬", "Tonga 🇹🇴", "Trinidad and Tobago 🇹🇹", "Tunisia 🇹🇳", "Turkey 🇹🇷", "Turkmenistan 🇹🇲", "Tuvalu 🇹🇻",
-      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
+      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan UZ", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
     ];
 
-    // TÜM ŞEHİRLER DOĞRUDAN KODA GÖMÜLDÜ (VERİTABANI BAĞIMLILIĞI KALDIRILDI)
     const initialCitiesData = {
       "Thailand 🇹🇭": ["BANGKOK", "PHUKET", "PATTAYA", "KRABI", "CHIANG MAI"],
       "Indonesia 🇮🇩": ["BALI", "JAKARTA", "SURABAYA", "BANDUNG", "YOGYAKARTA", "MEDAN", "LOMBOK"],
@@ -888,92 +887,43 @@
       let idCounter = 1000;
 
       const usernames = [
-        "travel_bug92", "caner_travels", "nomad_kris", "katya_spb", "santiago_go", 
-        "phuket_surfer", "mert_bkk", "ozlem_explorer", "tom_globe", "serkan_istanbul",
-        "elena_nomad", "alex_uk", "jake_surf_co", "selin_bali", "oleg_bali", "claire_travels",
-        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r",
+        "nomad_kris", "katya_spb", "santiago_go", "tom_globe", "elena_nomad", 
+        "alex_uk", "jake_surf_co", "oleg_bali", "claire_travels", "caner_travels",
+        "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r",
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      const detailedBaliPosts = [
-        "Canggu'da coworking alanında çalışıyorum, öğleden sonra Echo Beach'te sörf yapacak partner arıyorum.",
-        "Ubud'da orman içinde harika bir yoga kampındayım. Tapınak gezisi için yarın sabah katılmak isteyen var mı?",
-        "Seminyak sahilinde gün batımı eşliğinde akşam yemeği yiyeceğiz, eşlik etmek isteyen gezginler mesaj atabilir.",
-        "Uluwatu tapınakındaki Kecak dansı gösterisi için bilet alacağım, birlikte gidecek 2 kişi arıyorum.",
-        "Nusa Penida adasına sürat botuyla günübirlik geçiş yapacağız. Masrafları paylaşmak için harika bir fırsat!",
-        "Mount Batur zirvesine gün doğumu tırmanışı için rehberli tur ayarladık, gece yarısı otelden çıkıyoruz gelen var mı?",
-        "Sanur sahilinde sakin bir yürüyüş ve lokal deniz ürünleri restoranı için akşam buluşalım.",
-        "Canggu şık kafelerinde kahve molası ve remote work seansı yapmak isteyen dijital göçebeler yazsın.",
-        "Tegallalang pirinç teraslarında fotoğraf çekimi ve salıncak turu planlıyorum, araç kiralayacağız.",
-        "Jimbaran sahilinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
-        "Bedugul'deki Ulun Danu Beratan tapınağına kuzey turu yapacağız, arabada 2 kişilik boş yerimiz var.",
-        "Amed'de şnorkel ve serbest dalış (freedive) noktalarını keşfedecek su altı tutkunu arıyorum.",
-        "Sidemen vadisinde yeşillikler içinde huzurlu bir yürüyüş ve köy turu yapmak isteyenler buraya.",
-        "Pererenan bölgesinde yeni açılan lokal bir vegan restoranda akşam yemeği buluşması yapıyoruz.",
-        "Lovina'da sabah erken saatlerde yunus izleme bot turu için ortak arıyorum.",
-        "Kuta'da sörf tahtası kiralayıp dalgalarla boğuşmak isteyen acemiler ve bilenler toplansın!",
-        "Denpasar geleneksel sanat pazarından hediyelik eşya alışverişi yaparken pazarlık yapmama yardım edecek var mı?",
-        "Canggu'daki popüler beach club'larda hafta sonu partisi için ekip kuruyoruz.",
-        "Ubud kraliyet sarayı ve geleneksel pazarı gezisi sonrası lokal warung'da öğle yemeği.",
-        "Bali'nin gizli şelalelerini (Gitgit & Sekumpul) motosikletle keşif turu düzenliyoruz.",
-        "Batur dağı eteklerinde doğal kaplıcalarda (hot springs) yorgunluk atmak paha biçilmez olacak.",
-        "Melasti beach cliff yolunda muhteşem gün batımı manzarası izlemek için akşamüstü buluşalım.",
-        "Bali bitki çayları ve Luwak kahvesi tadımı için bir plantasyon turuna katılıyorum, gelen var mı?",
-        "Green School ve çevresindeki ekolojik projeleri ziyaret etmek isteyen çevre dostu gezginler?",
-        "Canggu'daki popüler paten parkı ve skate sahnesini izlemek için akşamüstü takılmacası.",
-        "Sanur limanından Gili adalarına geçiş yapacak olan var mı? Biletleri birlikte organize edelim.",
-        "Ubud'da geleneksel bir balili dans kursuna veya el sanatları atölyesine katılan oldu mu?",
-        "Bali sokak lezzetlerini (Nasi Goreng & Babi Guling) en hijyenik ve lezzetli yiyeceğimiz yer arayışı.",
-        "Ceningan ve Lembongan adalarına hafta sonu kaçamağı için bot bileti ve konaklama ayarlıyoruz.",
-        "Pura Lempuyang (Cennetin Kapısı) erken sabah fotoğraf çekimi için gece yola çıkıyoruz.",
-        "Bali geleneksel şifacı (Balian) ziyareti ve meditasyon seansı hakkında bilgi sahibi olan var mı?",
-        "Berawa sahilinde akşam yürüyüşü ve ardından akustik canlı müzik dinletisi olan bir mekana geçeceğiz.",
-        "Bali'de uzun dönem kalacak dijital göçebeler için villa paylaşımı veya ortak yaşam üzerine sohbet.",
-        "Taman Ayun tapınağı ve UNESCO kültür mirası su tapınakları turu için rehberli araç paylaşımı.",
-        "Nyepi (Sessizlik Günü) öncesi Ogoh-Ogoh geçit törenlerini izlemek için harika bir akşam planı.",
-        "Echo beach'te gün batımı sörfü sonrası sahilde hindistan cevizi eşliğinde sohbet seansı.",
-        "Bali'nin kuzeyinde dolunay seremonisine (Full Moon ceremony) local bir tapınakta katılım.",
-        "Kampung foreigner dostu mekanlarda akşam çalışma ve networking buluşması."
+      // İNGİLİZCE, RUSÇA VE TÜRKÇE KARIŞIK İÇERİKLER
+      const multilangBaliPosts = [
+        "Working from a coworking space in Canggu, looking for a surf partner at Echo Beach this afternoon!",
+        "Привет всем! Нахожусь в Убуде, кто хочет завтра утром сгонять на экскурсию по храмам?",
+        "Canggu'da harika bir kahve molası ve remote work seansı yapmak isteyen dijital göçebeler mesaj atabilir.",
+        "Just booked a ticket for the Kecak dance in Uluwatu, looking for 2 companions to join!",
+        "Кто собирается на Нуса Пениду на катере на день? Давайте объединимся для трансфера!",
+        "Mount Batur sunrise hike organized for tomorrow! Departing at midnight, anyone interested?",
+        "Seminyak sahilinde gün batımı eşliğinde akşam yemeği yiyeceğiz, katılmak isteyen var mı?",
+        "Hey travelers! Best spots for freediving in Amed? Recommendations appreciated!",
+        "Всем привет! Посоветуйте проверенные варунги в Чангу с местной кухней.",
+        "Tegallalang pirinç teraslarında fotoğraf çekimi ve tur planlıyoruz, araç kiralayacağız.",
+        "Anyone going to Gili Islands from Sanur port this weekend? Let's book together!",
+        "Ищу компанию для поездки к водопадам Секумпул на байках!"
       ];
 
-      const multilangTexts = {
-        en: [
-          "Hey everyone! Currently staying in the city center. Anyone up for a coffee or dinner tonight?",
-          "Just arrived here! What are the must-visit places for a 3-day trip?",
-          "Weather is amazing today. Who wants to join a walking tour around historical spots?",
-          "Looking for travel companions to explore local night markets this weekend!",
-          "Great vibes and awesome local food here. Highly recommend trying street vendors."
-        ],
-        tr: [
-          "Selamlar! Şu an şehir merkezindeyim, akşam kahve veya yemek için eşlik etmek isteyen var mı?",
-          "Yeni geldim sayılır, 3 günlük kısa bir tur için mutlaka görülmesi gereken yerler neresi?",
-          "Hava harika, tarihi yerleri birlikte gezmek isteyen gezginler mesaj atabilir mi?",
-          "Bu hafta sonu yerel gece pazarlarını ve sokak lezzetlerini keşfedecek arkadaş arıyorum!",
-          "Şehir gerçekten çok hareketli ve insanlar çok misafirperver. Kesinlikle tavsiye ederim."
-        ],
-        ru: [
-          "Всем привет! Кто сейчас здесь? Ищу компанию прогуляться по центру вечером.",
-          "Только что приехал! Посоветуйте хорошие и недорогие кафе поблизости.",
-          "Какая прекрасная погода! Кто хочет сгонять на экскурсию вместе?",
-          "Ищу попутчиков для поездки по местным достопримечательностям на выходных."
-        ]
-      };
-
-      const replyPool = {
-        en: ["I'm down! Let me know where and when.", "Check out the old town area, totally worth it!", "Count me in for dinner!", "I was there yesterday, absolutely loved it."],
-        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmelisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
-        ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
-      };
+      const replyPool = [
+        "Sounds awesome! Sent you a DM.",
+        "Отличная идея, я присоединяюсь!",
+        "Bana uyar, saat kaçta buluşuyoruz?",
+        "Count me in!",
+        "Я тоже хочу! Напиши в личку."
+      ];
 
       const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
       
       superPopular.forEach(cityName => {
-        const loopCount = (cityName === 'BALI') ? detailedBaliPosts.length : 10;
+        const loopCount = (cityName === 'BALI') ? multilangBaliPosts.length : 8;
         for (let i = 0; i < loopCount; i++) {
           const author = usernames[i % usernames.length];
-          const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
-          
-          let text = (cityName === 'BALI') ? detailedBaliPosts[i] : multilangTexts[langKey][i % multilangTexts[langKey].length];
+          let text = (cityName === 'BALI') ? multilangBaliPosts[i] : `Hey everyone! Enjoying my time in ${cityName}. Anyone up for a coffee or exploring local spots tonight?`;
           const hoursAgo = (i * 3) + 1;
 
           posts.push({
@@ -983,7 +933,7 @@
             author: author,
             date: new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString(),
             replies: [
-              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 1) * 3600 * 1000).toISOString() }
+              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[i % replyPool.length], date: new Date(Date.now() - (hoursAgo - 1) * 3600 * 1000).toISOString() }
             ]
           });
         }
@@ -993,170 +943,16 @@
     }
 
     const dict = {
-      EN: {
-        search: "Search country or city...",
-        addCustom: "+ Add Custom City",
-        bannerTitle: "Find Travel Friends, Share Tips!",
-        bannerDesc: "Connect instantly with travelers worldwide.",
-        postPlaceholder: "Write a tip, question or travel plan...",
-        submitBtn: "Post",
-        popularTitle: "Popular Cities",
-        postCount: "posts",
-        dmBtn: "Message",
-        replyBtn: "Reply",
-        inbox: "Messages",
-        adminPanel: "Approval Panel",
-        liveChatTitle: "Global Travel Chat Room",
-        chatPlaceholder: "Type a message or ask @gemini...",
-        send: "Send",
-        login: "Log In",
-        register: "Register",
-        logout: "Log Out",
-        suggest: "💡 Suggest",
-        cancel: "Cancel",
-        close: "Close",
-        save: "Save",
-        update: "Update",
-        posts: "Posts"
-      },
-      RU: {
-        search: "Поиск страны или города...",
-        addCustom: "+ Добавить город",
-        bannerTitle: "Найди попутчика, делись советами!",
-        bannerDesc: "Общайтесь с путешественниками по всему миру.",
-        postPlaceholder: "Напишите совет, вопрос или план поездки...",
-        submitBtn: "Опубликовать",
-        popularTitle: "Популярные города",
-        postCount: "постов",
-        dmBtn: "Сообщение",
-        replyBtn: "Ответить",
-        inbox: "Сообщения",
-        adminPanel: "Панель модерации",
-        liveChatTitle: "Общий чат путешественников",
-        chatPlaceholder: "Напишите сообщение или спросите @gemini...",
-        send: "Отправить",
-        login: "Войти",
-        register: "Регистрация",
-        logout: "Выйти",
-        suggest: "💡 Идея",
-        cancel: "Отмена",
-        close: "Закрыть",
-        save: "Сохранить",
-        update: "Обновить",
-        posts: "Публикации"
-      },
-      TR: {
-        search: "Ülke veya Şehir ara...",
-        addCustom: "+ Kendi Şehrini Ekle",
-        bannerTitle: "Seyahat Arkadaşını Bul, İpuçlarını Paylaş!",
-        bannerDesc: "Dünyadaki tüm ülkelerdeki gezginlerle anında bağlantı kur.",
-        postPlaceholder: "Bu şehir hakkında ipucu, soru veya seyahat planını yaz...",
-        submitBtn: "Paylaş",
-        popularTitle: "Popüler Şehirler",
-        postCount: "yazı",
-        dmBtn: "Mesaj At",
-        replyBtn: "Cevap Ver",
-        inbox: "Mesajlar",
-        adminPanel: "Onay Paneli",
-        liveChatTitle: "Genel Seyahat Sohbet Odası",
-        chatPlaceholder: "Mesaj yazın veya @gemini'ye sorun...",
-        send: "Gönder",
-        login: "Giriş Yap",
-        register: "Kayıt Ol",
-        logout: "Çıkış",
-        suggest: "💡 Öner",
-        cancel: "İptal",
-        close: "Kapat",
-        save: "Kaydet",
-        update: "Güncelle",
-        posts: "Paylaşımlar"
-      },
-      ES: {
-        search: "Buscar país o ciudad...",
-        addCustom: "+ Agregar Ciudad",
-        bannerTitle: "¡Encuentra compañeros y comparte tips!",
-        bannerDesc: "Conéctate al instante con viajeros de todo el mundo.",
-        postPlaceholder: "Escribe un consejo, pregunta o plan de viaje...",
-        submitBtn: "Publicar",
-        popularTitle: "Ciudades Populares",
-        postCount: "publicaciones",
-        dmBtn: "Mensaje",
-        replyBtn: "Responder",
-        inbox: "Mensajes",
-        adminPanel: "Panel de Aprobación",
-        liveChatTitle: "Sala de Chat Global",
-        chatPlaceholder: "Escribe un mensaje o pregunta a @gemini...",
-        send: "Enviar",
-        login: "Iniciar Sesión",
-        register: "Registrarse",
-        logout: "Cerrar Sesión",
-        suggest: "💡 Sugerir",
-        cancel: "Cancelar",
-        close: "Cerrar",
-        save: "Guardar",
-        update: "Actualizar",
-        posts: "Publicaciones"
-      },
-      HI: {
-        search: "देश या शहर खोजें...",
-        addCustom: "+ अपना शहर जोड़ें",
-        bannerTitle: "यात्रा साथी खोजें, सुझाव साझा करें!",
-        bannerDesc: "दुनिया भर के यात्रियों से तुरंत जुड़ें।",
-        postPlaceholder: "इस शहर के बारे में सुझाव या योजना लिखें...",
-        submitBtn: "पोस्ट करें",
-        popularTitle: "लोकप्रिय शहर",
-        postCount: "पोस्ट",
-        dmBtn: "संदेश",
-        replyBtn: "उत्तर दें",
-        inbox: "संदेश",
-        adminPanel: "अनुमोदन पैनल",
-        liveChatTitle: "वैश्विक यात्रा चैट",
-        chatPlaceholder: "संदेश लिखें या @gemini से पूछें...",
-        send: "भेजें",
-        login: "लॉग इन",
-        register: "पंजीकरण",
-        logout: "लॉग आउट",
-        suggest: "💡 सुझाव",
-        cancel: "रद्द करें",
-        close: "बंद करें",
-        save: "सहेजें",
-        update: "अपडेट करें",
-        posts: "पोस्ट"
-      },
-      ZH: {
-        search: "搜索国家或城市...",
-        addCustom: "+ 添加自定义城市",
-        bannerTitle: "寻找旅行伙伴，分享攻略！",
-        bannerDesc: "立即与全球旅行者建立联系。",
-        postPlaceholder: "写下关于这个城市的贴士、问题或计划...",
-        submitBtn: "发布",
-        popularTitle: "热门城市",
-        postCount: "条动态",
-        dmBtn: "私信",
-        replyBtn: "回复",
-        inbox: "消息",
-        adminPanel: "审核面板",
-        liveChatTitle: "全球旅行聊天室",
-        chatPlaceholder: "发送消息或咨询 @gemini...",
-        send: "发送",
-        login: "登录",
-        register: "注册",
-        logout: "登出",
-        suggest: "💡 推荐",
-        cancel: "取消",
-        close: "关闭",
-        save: "保存",
-        update: "更新",
-        posts: "动态"
-      }
+      EN: { search: "Search country or city...", addCustom: "+ Add Custom City", bannerTitle: "Find Travel Friends, Share Tips!", bannerDesc: "Connect instantly with travelers worldwide.", postPlaceholder: "Write a tip, question or travel plan...", submitBtn: "Post", popularTitle: "Popular Cities", postCount: "posts", dmBtn: "Message", replyBtn: "Reply", inbox: "Messages", adminPanel: "Approval Panel", liveChatTitle: "Global Travel Chat Room", chatPlaceholder: "Type a message or ask @gemini...", send: "Send", login: "Log In", register: "Register", logout: "Log Out", suggest: "💡 Suggest", cancel: "Cancel", close: "Close", save: "Save", update: "Update", posts: "Posts" },
+      RU: { search: "Поиск страны или города...", addCustom: "+ Добавить город", bannerTitle: "Найди попутчика, делись советами!", bannerDesc: "Общайтесь с путешественниками по всему миру.", postPlaceholder: "Напишите совет, вопрос или план поездки...", submitBtn: "Опубликовать", popularTitle: "Популярные города", postCount: "постов", dmBtn: "Сообщение", replyBtn: "Ответить", inbox: "Сообщения", adminPanel: "Панель модерации", liveChatTitle: "Общий чат путешественников", chatPlaceholder: "Напишите сообщение или спросите @gemini...", send: "Отправить", login: "Войти", register: "Регистрация", logout: "Выйти", suggest: "💡 Идея", cancel: "Отмена", close: "Закрыть", save: "Сохранить", update: "Обновить", posts: "Публикации" },
+      TR: { search: "Ülke veya Şehir ara...", addCustom: "+ Kendi Şehrini Ekle", bannerTitle: "Seyahat Arkadaşını Bul, İpuçlarını Paylaş!", bannerDesc: "Dünyadaki tüm ülkelerdeki gezginlerle anında bağlantı kur.", postPlaceholder: "Bu şehir hakkında ipucu, soru veya seyahat planını yaz...", submitBtn: "Paylaş", popularTitle: "Popüler Şehirler", postCount: "yazı", dmBtn: "Mesaj At", replyBtn: "Cevap Ver", inbox: "Mesajlar", adminPanel: "Onay Paneli", liveChatTitle: "Genel Seyahat Sohbet Odası", chatPlaceholder: "Mesaj yazın veya @gemini'ye sorun...", send: "Gönder", login: "Giriş Yap", register: "Kayıt Ol", logout: "Çıkış", suggest: "💡 Öner", cancel: "İptal", close: "Kapat", save: "Kaydet", update: "Güncelle", posts: "Paylaşımlar" },
+      ES: { search: "Buscar país o ciudad...", addCustom: "+ Agregar Ciudad", bannerTitle: "¡Encuentra compañeros y comparte tips!", bannerDesc: "Conéctate al instante con viajeros de todo el mundo.", postPlaceholder: "Escribe un consejo, pregunta o plan de viaje...", submitBtn: "Publicar", popularTitle: "Ciudades Populares", postCount: "publicaciones", dmBtn: "Mensaje", replyBtn: "Responder", inbox: "Mensajes", adminPanel: "Panel de Aprobación", liveChatTitle: "Sala de Chat Global", chatPlaceholder: "Escribe un mensaje o pregunta a @gemini...", send: "Enviar", login: "Iniciar Sesión", register: "Registrarse", logout: "Cerrar Sesión", suggest: "💡 Sugerir", cancel: "Cancelar", close: "Cerrar", save: "Guardar", update: "Actualizar", posts: "Publicaciones" },
+      HI: { search: "देश या शहर खोजें...", addCustom: "+ अपना शहर जोड़ें", bannerTitle: "यात्रा साथी खोजें, सुझाव साझा करें!", bannerDesc: "दुनिया भर के यात्रियों से तुरंत जुड़ें।", postPlaceholder: "इस शहर के बारे में सुझाव या योजना लिखें...", submitBtn: "पोस्ट करें", popularTitle: "लोकप्रिय शहर", postCount: "पोस्ट", dmBtn: "संदेश", replyBtn: "उत्तर दें", inbox: "संदेश", adminPanel: "अनुमोदन पैनल", liveChatTitle: "वैश्विक यात्रा चैट", chatPlaceholder: "संदेश लिखें या @gemini से पूछें...", send: "भेजें", login: "लॉग इन", register: "पंजीकरण", logout: "लॉग आउट", suggest: "💡 सुझाव", cancel: "रद्द करें", close: "बंद करें", save: "सहेजें", update: "अपडेट करें", posts: "पोस्ट" },
+      ZH: { search: "搜索国家或城市...", addCustom: "+ 添加自定义城市", bannerTitle: "寻找旅行伙伴，分享攻略！", bannerDesc: "立即与全球旅行者建立联系。", postPlaceholder: "写下关于这个城市的贴士、问题或计划...", submitBtn: "发布", popularTitle: "热门城市", postCount: "条动态", dmBtn: "私信", replyBtn: "回复", inbox: "消息", adminPanel: "审核面板", liveChatTitle: "全球旅行聊天室", chatPlaceholder: "发送消息或咨询 @gemini...", send: "发送", login: "登录", register: "注册", logout: "登出", suggest: "💡 推荐", cancel: "取消", close: "关闭", save: "保存", update: "更新", posts: "动态" }
     };
 
     function transliterateToLatin(text) {
-      const cyrillicMap = {
-        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y',
-        'к':'k','л':'l','m':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f',
-        'х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya'
-      };
+      const cyrillicMap = { 'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'zh','з':'z','и':'i','й':'y','к':'k','л':'l','m':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'shch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya' };
       let clean = text.toLowerCase().trim();
       let result = '';
       for (let i = 0; i < clean.length; i++) {
@@ -1233,21 +1029,14 @@
       const { collection, addDoc, getDocs, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // ŞEHİR LİSTESİNİ DOĞRUDAN KOD LİSTESİNDEN ALIR
       citiesData = initialCitiesData;
-
       renderSidebar();
 
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
-      // EĞER BALİ İÇİN YAZI AZSA TEK SEFERLİK ÖRNEK YORUMLARI EKLER
-      let baliPostCount = 0;
-      postsSnapshot.forEach(docSnap => {
-        if (docSnap.data().city === "BALI") baliPostCount++;
-      });
-
-      if (baliPostCount < 5) {
+      // VERİTABANI BOŞSA VEYA BALİ YAZILARI SİLİNMİŞSE TEK SEFERLİK YÜKLER
+      if (postsSnapshot.empty) {
         const defaultPosts = generateRichForumPosts();
         for (const p of defaultPosts) {
           await addDoc(postsRef, {
