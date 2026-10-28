@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Travel Friend - Travel Companion & Forum</title>
+  <title>TravelFriendX - Travel Companion & Forum</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -48,6 +48,11 @@
       align-items: center;
       gap: 0.5rem;
       cursor: pointer;
+    }
+
+    .logo-x {
+      color: #ef4444;
+      font-weight: 800;
     }
 
     .header-actions {
@@ -563,7 +568,7 @@
 
   <header>
     <div class="logo" onclick="initMostPopularCity()">
-      <i class="fa-solid fa-compass"></i> Travel Friend
+      <i class="fa-solid fa-compass"></i> TravelFriend<span class="logo-x">X</span>
     </div>
     <div class="header-actions">
       <div id="authUserArea" class="auth-buttons"></div>
@@ -814,7 +819,7 @@
       "Qatar 🇶🇦",
       "Romania 🇷🇴", "Russia 🇷🇺", "Rwanda 🇷🇼", "Saint Kitts and Nevis 🇰🇳", "Saint Lucia 🇱🇨", "Saint Vincent and the Grenadines 🇻🇨", "Samoa 🇼🇸", "San Marino 🇸🇲", "Sao Tome and Principe 🇸🇹", "Saudi Arabia 🇸🇦", "Senegal 🇸🇳", "Serbia 🇷🇸", "Seychelles 🇸🇨", "Sierra Leone 🇸🇱", "Singapore 🇸🇬", "Slovakia 🇸🇰", "Slovenia 🇸🇮", "Solomon Islands 🇸🇧", "Somalia 🇸🇴", "South Africa 🇿🇦", "South Sudan 🇸🇸", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sudan 🇸🇩", "Suriname 🇸🇷", "Sweden 🇸🇪", "Switzerland 🇨🇭", "Syria 🇸🇾",
       "Taiwan 🇹🇼", "Tajikistan 🇹🇯", "Tanzania 🇹🇿", "Thailand 🇹🇭", "Timor-Leste 🇹🇱", "Togo 🇹🇬", "Tonga 🇹🇴", "Trinidad and Tobago 🇹🇹", "Tunisia 🇹🇳", "Turkey 🇹🇷", "Turkmenistan 🇹🇲", "Tuvalu 🇹🇻",
-      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan UZ", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
+      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
     ];
 
     const initialCitiesData = {
@@ -871,7 +876,7 @@
       "Russia 🇷🇺": ["MOSCOW", "SAINT PETERSBURG", "KAZAN", "SOCHI"],
       "Ukraine 🇺🇦": ["KYIV", "ODESA", "LVIV"],
       "Serbia 🇷🇸": ["BELGRADE"],
-      "Bosnia and Herzegovina 🇧🇦": ["SARAJEVO", "MOSTAR"],
+      "Bosnia and Herzegovina 🇦🇹": ["SARAJEVO", "MOSTAR"],
       "Albania 🇦🇱": ["TIRANA"],
       "North Macedonia 🇲🇰": ["SKOPJE", "OHRID"],
       "Montenegro 🇲🇪": ["KOTOR", "PODGORICA"],
@@ -893,7 +898,6 @@
         "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
       ];
 
-      // İNGİLİZCE, RUSÇA VE TÜRKÇE KARIŞIK İÇERİKLER
       const multilangBaliPosts = [
         "Working from a coworking space in Canggu, looking for a surf partner at Echo Beach this afternoon!",
         "Привет всем! Нахожусь в Убуде, кто хочет завтра утром сгонять на экскурсию по храмам?",
@@ -1035,7 +1039,6 @@
       const postsRef = collection(db, "posts");
       const postsSnapshot = await getDocs(postsRef);
 
-      // VERİTABANI BOŞSA VEYA BALİ YAZILARI SİLİNMİŞSE TEK SEFERLİK YÜKLER
       if (postsSnapshot.empty) {
         const defaultPosts = generateRichForumPosts();
         for (const p of defaultPosts) {
@@ -1575,51 +1578,49 @@
         html += `<div class="post-card">
           <div class="post-header">
             <div class="author-info"><span class="author-name">👤 ${post.author} ${isSelfPost ? '(You)' : ''}</span></div>
-            <div style="display:flex; align-items:center; gap: 8px;">
-              <span style="font-size: 0.8rem; color: var(--text-muted);">📍 ${post.city} • ${formatTime(post.date)}</span>
-              ${(isAdmin || isSelfPost) ? `<button class="btn-delete-post" onclick="deletePost('${pId}')" title="Delete Post"><i class="fa-solid fa-trash"></i></button>` : ''}
+            <div style="display:flex; align-items:center; gap:8px;">
+              <span style="font-size: 0.8rem; color: var(--text-muted);">${formatTime(post.date)}</span>
+              ${(isSelfPost || isAdmin) ? `<button class="btn-delete-post" onclick="deletePost('${pId}')" title="Delete Post"><i class="fa-solid fa-trash"></i></button>` : ''}
             </div>
           </div>
           <div class="post-content">${post.text}</div>
           <div class="post-footer">
-            <button class="btn-reply" onclick="toggleReplyForm('${pId}')"><i class="fa-solid fa-reply"></i> ${d.replyBtn}</button>
-            ${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" onclick="tryOpenDm('${post.author}', ${canDmPostAuthor})"><i class="fa-solid ${canDmPostAuthor ? 'fa-envelope' : 'fa-lock'}"></i> ${d.dmBtn}</button>` : ''}
+            ${!isSelfPost ? `<button class="btn-dm ${!canDmPostAuthor ? 'disabled' : ''}" ${canDmPostAuthor ? `onclick="openDmModal('${post.author}')"` : `title="You must reply to this user's post before sending a direct message."`}><i class="fa-solid fa-paper-plane"></i> ${d.dmBtn}</button>` : ''}
+            <button class="btn-reply" onclick="toggleReplyForm('${pId}')"><i class="fa-solid fa-reply"></i> ${d.replyBtn} (${post.replies ? post.replies.length : 0})</button>
           </div>
           <div class="reply-form" id="reply-form-${pId}">
-            <textarea id="reply-input-${pId}" placeholder="${currentUser ? currentUser.username : 'Traveler'}..."></textarea>
+            <textarea id="reply-input-${pId}" placeholder="Write a reply..."></textarea>
             <div style="display:flex; justify-content:flex-end;">
-              <button class="btn-submit" style="padding:0.4rem 1rem;" onclick="submitReply('${pId}')">${d.replyBtn}</button>
+              <button class="btn-submit" style="margin:0; padding:0.4rem 1rem; font-size:0.85rem;" onclick="submitReply('${pId}')">Send Reply</button>
             </div>
-          </div>
-          ${post.replies && post.replies.length > 0 ? `<div class="replies-container">${post.replies.map(r => {
-            const isSelfReply = currentUser && r.author === currentUser.username;
-            return `<div class="reply-card">
-              <div style="display:flex; justify-content:space-between; margin-bottom:0.3rem; align-items:center;">
-                <span style="font-weight:700; font-size:0.85rem;">💬 ${r.author} ${isSelfReply ? '(You)' : ''}</span>
+          </div>`;
+
+        if (post.replies && post.replies.length > 0) {
+          html += `<div class="replies-container">`;
+          post.replies.forEach(reply => {
+            const isSelfReply = currentUser && reply.author === currentUser.username;
+            html += `<div class="reply-card">
+              <div style="display:flex; justify-content:space-between; margin-bottom: 0.4rem; font-size: 0.85rem;">
+                <strong>👤 ${reply.author} ${isSelfReply ? '(You)' : ''}</strong>
                 <div style="display:flex; align-items:center; gap:6px;">
-                  <span style="font-size:0.75rem; color:var(--text-muted);">${formatTime(r.date)}</span>
-                  ${(isAdmin || isSelfReply) ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.7rem;" onclick="deleteReply('${pId}', ${r.id})" title="Delete Reply"><i class="fa-solid fa-trash"></i></button>` : ''}
+                  <span style="color:var(--text-muted); font-size:0.75rem;">${formatTime(reply.date)}</span>
+                  ${(isSelfReply || isAdmin) ? `<button class="btn-delete-post" style="padding:2px 5px; font-size:0.7rem;" onclick="deleteReply('${pId}', ${reply.id})"><i class="fa-solid fa-trash"></i></button>` : ''}
                 </div>
               </div>
-              <div style="font-size:0.9rem;">${r.text}</div>
+              <div style="font-size: 0.9rem;">${reply.text}</div>
             </div>`;
-          }).join('')}</div>` : ''}
-        </div>`;
+          });
+          html += `</div>`;
+        }
+        html += `</div>`;
       });
       container.innerHTML = html;
     }
 
-    function tryOpenDm(targetUser, canDm) {
-      if (!currentUser) return alert("Please log in to send a message!");
-      if (!canDm) { alert(`You must reply to ${targetUser}'s post before sending a direct message!`); return; }
-      openDmModal(targetUser);
-    }
-
-    function openDmModal(author) {
-      targetDmUser = author;
-      const d = dict[currentLang] || dict['EN'];
-      document.getElementById('dmModalTitle').innerText = d.dmModalTitle;
-      document.getElementById('dmTargetUser').innerText = `Messaging ${author}...`;
+    function openDmModal(targetUser) {
+      if (!currentUser) return alert("Please log in!");
+      targetDmUser = targetUser;
+      document.getElementById('dmTargetUser').innerText = `To: @${targetUser}`;
       document.getElementById('dmMessageText').value = '';
       document.getElementById('dmModal').classList.add('active');
     }
@@ -1628,63 +1629,56 @@
 
     async function sendDirectMessage() {
       const text = document.getElementById('dmMessageText').value.trim();
-      if (!text) return;
+      if (!text) return alert("Please write a message.");
       const { collection, addDoc } = window.firebaseModules;
       await addDoc(collection(window.db, "messages"), {
         from: currentUser.username,
         to: targetDmUser,
         text,
-        date: new Date().toLocaleString()
+        date: new Date().toISOString()
       });
       closeDmModal();
-      alert("Message sent!");
+      alert("Message sent successfully!");
     }
 
-    function openInbox() {
-      if (!currentUser) return alert("Please log in to view inbox!");
+    async function openInbox() {
+      if (!currentUser) return;
+      const modal = document.getElementById('inboxModal');
       const list = document.getElementById('inboxMessagesList');
       const myMsgs = messages.filter(m => m.to === currentUser.username);
+
       if (myMsgs.length === 0) {
-        list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">No messages yet.</p>`;
+        list.innerHTML = `<p style="color:var(--text-muted); text-align:center;">Your inbox is empty.</p>`;
       } else {
         let html = '';
-        myMsgs.forEach(m => { 
-          const isAdmin = currentUser && currentUser.isAdmin;
-          html += `<div style="padding: 0.60rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem; display:flex; justify-content:space-between; align-items:flex-start;">
-            <div><strong>From: ${m.from}</strong><p style="font-size:0.9rem; margin: 0.2rem 0;">${m.text}</p><span style="font-size: 0.75rem; color:var(--text-muted);">${m.date}</span></div>
-            ${isAdmin ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteInboxMessage('${m.firestoreId}')"><i class="fa-solid fa-trash"></i></button>` : ''}
-          </div>`; 
+        myMsgs.forEach(m => {
+          html += `<div style="padding: 0.8rem; border-bottom: 1px solid var(--border-color); margin-bottom: 0.5rem; background:#f8fafc; border-radius:8px;">
+            <div style="display:flex; justify-content:space-between; font-size:0.85rem; color:var(--text-muted); margin-bottom:0.3rem;">
+              <span>From: <strong>${m.from}</strong></span>
+              <span>${formatTime(m.date)}</span>
+            </div>
+            <div style="font-size:0.95rem; margin-bottom:0.5rem;">${m.text}</div>
+            <div style="display:flex; justify-content:flex-end;">
+              <button class="btn-submit" style="padding:0.3rem 0.8rem; font-size:0.8rem; margin:0;" onclick="openDmModal('${m.from}'); closeInbox();">Reply</button>
+            </div>
+          </div>`;
         });
         list.innerHTML = html;
       }
-      document.getElementById('inboxModal').classList.add('active');
-    }
-
-    async function deleteInboxMessage(firestoreId) {
-      if (!confirm("Delete this message?")) return;
-      const { deleteDoc, doc } = window.firebaseModules;
-      await deleteDoc(doc(window.db, "messages", firestoreId));
-      openInbox();
+      modal.classList.add('active');
     }
 
     function closeInbox() { document.getElementById('inboxModal').classList.remove('active'); }
 
     async function detectUserLanguageByIP() {
       try {
-        const response = await fetch('https://ipapi.co/json/');
-        const data = await response.json();
-        if (data && data.country_code) {
-          const country = data.country_code;
-          if (country === 'RU' || country === 'UA') currentLang = 'RU';
-          else if (country === 'TR') currentLang = 'TR';
-          document.getElementById('langLabel').innerText = currentLang;
-          updateTexts();
-          renderSidebar();
-          renderPopularCities();
-          renderFeed();
-        }
+        const res = await fetch('https://ipapi.co/json/');
+        const data = await res.json();
+        const country = data.country_code;
+        if (country === 'TR') selectLanguage('TR');
+        else if (['RU', 'UA', 'BY', 'KZ'].includes(country)) selectLanguage('RU');
       } catch (e) {
-        console.log("IP geolocation fallback to default (EN)");
+        console.log("IP language detect skipped.");
       }
     }
   </script>
