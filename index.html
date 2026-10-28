@@ -318,34 +318,66 @@
     }
 
     .live-chat-box {
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 1.2rem;
+      background: linear-gradient(to bottom, #ffffff, #f8fafc);
+      border: 2px solid #bfdbfe;
+      border-radius: 16px;
+      padding: 1.5rem;
       margin-bottom: 2rem;
+      box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.08);
     }
-    .chat-messages-container {
-      height: 200px;
-      overflow-y: auto;
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 0.8rem;
-      background: #f8fafc;
-      margin-bottom: 0.8rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-    }
-    .chat-msg-item {
-      font-size: 0.9rem;
-      padding: 0.4rem 0.6rem;
-      background: #ffffff;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
+
+    .chat-header-flex {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.6rem;
     }
+
+    .chat-badge-ai {
+      background: #dbeafe;
+      color: #1e40af;
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .chat-messages-container {
+      height: 240px;
+      overflow-y: auto;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+      padding: 1rem;
+      background: #ffffff;
+      margin-bottom: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.7rem;
+      box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+    }
+
+    .chat-msg-item {
+      font-size: 0.92rem;
+      padding: 0.6rem 0.8rem;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .chat-msg-item.ai-msg {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+    }
+
     .chat-username-clickable {
       font-weight: 700;
       color: var(--primary);
@@ -355,14 +387,23 @@
     }
     .chat-username-clickable:hover { color: var(--primary-hover); }
 
-    .chat-input-area { display: flex; gap: 0.5rem; }
+    .chat-input-area { 
+      display: flex; 
+      gap: 0.6rem; 
+      background: #ffffff;
+      padding: 0.4rem;
+      border: 1px solid var(--border-color);
+      border-radius: 10px;
+    }
+
     .chat-input-area input {
       flex: 1;
-      padding: 0.6rem;
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
+      padding: 0.6rem 0.8rem;
+      border: none;
       outline: none;
       font-family: inherit;
+      background: transparent;
+      font-size: 0.95rem;
     }
 
     .post-box {
@@ -576,17 +617,27 @@
       </div>
 
       <div class="live-chat-box">
-        <div class="popular-title" style="margin-bottom:0.8rem;">
-          <i class="fa-solid fa-comments" style="color:var(--primary);"></i> 
-          <span id="liveChatTitle">Global Travel Chat Room (AI Enabled)</span>
+        <div class="chat-header-flex">
+          <div class="popular-title" style="margin-bottom:0;">
+            <i class="fa-solid fa-comments" style="color:var(--primary);"></i> 
+            <span id="liveChatTitle">Global Travel Chat Room</span>
+          </div>
+          <div class="chat-badge-ai"><i class="fa-solid fa-wand-magic-sparkles"></i> @gemini Active</div>
         </div>
         <div class="chat-messages-container" id="chatMessagesContainer"></div>
         <div class="chat-input-area">
           <input type="text" id="chatInputMessage" placeholder="Type a message or ask @gemini..." onkeypress="handleChatKeyPress(event)">
-          <button class="btn-submit" id="chatSendBtn" style="margin:0; padding: 0.5rem 1rem;" onclick="sendLiveChatMessage()">Send</button>
+          <button class="btn-submit" id="chatSendBtn" style="margin:0; padding: 0.5rem 1.2rem;" onclick="sendLiveChatMessage()">Send</button>
         </div>
       </div>
 
+      <!-- ŞEHİR BAŞLIĞI VE SAYACI ARTIK YAZI YAZMA KUTUSUNUN ÜSTÜNDE -->
+      <div class="feed-header">
+        <h2 id="currentFeedTitle">Posts</h2>
+        <span id="postCountBadge" class="city-count">0 posts</span>
+      </div>
+
+      <!-- YAZI YAZMA KUTUSU -->
       <div class="post-box">
         <textarea id="postText" placeholder="Write a tip, question or travel plan..."></textarea>
         <div class="post-box-actions">
@@ -594,10 +645,6 @@
         </div>
       </div>
 
-      <div class="feed-header">
-        <h2 id="currentFeedTitle">Posts</h2>
-        <span id="postCountBadge" class="city-count">0 posts</span>
-      </div>
       <div id="postsFeedContainer"></div>
     </main>
   </div>
@@ -780,7 +827,7 @@
       "China 🇨🇳": ["HONG KONG", "SHENZHEN", "GUANGZHOU", "SHANGHAI", "BEIJING", "CHENGDU", "HANGZHOU"],
       "United Kingdom 🇬🇧": ["LONDON", "EDINBURGH"],
       "Macau 🇲🇴": ["MACAU"],
-      "Turkey 🇹🇷": ["ISTANBUL", "ANTALYA", "MUGLA", "EDIRNE"],
+      "Turkey 🇹🇷": ["ISTANBUL", "ANTALYA", "MUGLA"],
       "United Arab Emirates 🇦🇪": ["DUBAI", "ABU DHABI"],
       "Saudi Arabia 🇸🇦": ["JEDDAH", "RIYADH"],
       "France 🇫🇷": ["PARIS", "NICE", "LYON"],
@@ -838,187 +885,6 @@
       "Slovenia 🇸🇮": ["LJUBLJANA"]
     };
 
-    function generateRichForumPosts() {
-      const posts = [];
-      let idCounter = 1000;
-
-      const usernames = [
-        "travel_bug92", "caner_travels", "nomad_kris", "katya_spb", "santiago_go", 
-        "phuket_surfer", "mert_bkk", "ozlem_explorer", "tom_globe", "serkan_istanbul",
-        "elena_nomad", "alex_uk", "jake_surf_co", "selin_bali", "oleg_bali", "claire_travels",
-        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r",
-        "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
-      ];
-
-      const detailedBaliPosts = [
-        "Canggu'da coworking alanında çalışıyorum, öğleden sonra Echo Beach'te sörf yapacak partner arıyorum.",
-        "Ubud'da orman içinde harika bir yoga kampındayım. Tapınak gezisi için yarın sabah katılmak isteyen var mı?",
-        "Seminyak sahilinde gün batımı eşliğinde akşam yemeği yiyeceğiz, eşlik etmek isteyen gezginler mesaj atabilir.",
-        "Uluwatu tapınakındaki Kecak dansı gösterisi için bilet alacağım, birlikte gidecek 2 kişi arıyorum.",
-        "Nusa Penida adasına sürat botuyla günübirlik geçiş yapacağız. Masrafları paylaşmak için harika bir fırsat!",
-        "Mount Batur zirvesine gün doğumu tırmanışı için rehberli tur ayarladık, gece yarısı otelden çıkıyoruz gelen var mı?",
-        "Sanur sahilinde sakin bir yürüyüş ve lokal deniz ürünleri restoranı için akşam buluşalım.",
-        "Canggu şık kafelerinde kahve molası ve remote work seansı yapmak isteyen dijital göçebeler yazsın.",
-        "Tegallalang pirinç teraslarında fotoğraf çekimi ve salıncak turu planlıyorum, araç kiralayacağız.",
-        "Jimbaran sahilinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
-        "Bedugul'deki Ulun Danu Beratan tapınağına kuzey turu yapacağız, arabada 2 kişilik boş yerimiz var.",
-        "Amed'de şnorkel ve serbest dalış (freedive) noktalarını keşfedecek su altı tutkunu arıyorum.",
-        "Sidemen vadisinde yeşillikler içinde huzurlu bir yürüyüş ve köy turu yapmak isteyenler buraya.",
-        "Pererenan bölgesinde yeni açılan lokal bir vegan restoranda akşam yemeği buluşması yapıyoruz.",
-        "Lovina'da sabah erken saatlerde yunus izleme bot turu için ortak arıyorum.",
-        "Kuta'da sörf tahtası kiralayıp dalgalarla boğuşmak isteyen acemiler ve bilenler toplansın!",
-        "Denpasar geleneksel sanat pazarından hediyelik eşya alışverişi yaparken pazarlık yapmama yardım edecek var mı?",
-        "Canggu'daki popüler beach club'larda hafta sonu partisi için ekip kuruyoruz.",
-        "Ubud kraliyet sarayı ve geleneksel pazarı gezisi sonrası lokal warung'da öğle yemeği.",
-        "Bali'nin gizli şelalelerini (Gitgit & Sekumpul) motosikletle keşif turu düzenliyoruz.",
-        "Batur dağı eteklerinde doğal kaplıcalarda (hot springs) yorgunluk atmak paha biçilmez olacak.",
-        "Melasti beach cliff yolunda muhteşem gün batımı manzarası izlemek için akşamüstü buluşalım.",
-        "Bali bitki çayları ve Luwak kahvesi tadımı için bir plantasyon turuna katılıyorum, gelen var mı?",
-        "Green School ve çevresindeki ekolojik projeleri ziyaret etmek isteyen çevre dostu gezginler?",
-        "Canggu'daki popüler paten parkı ve skate sahnesini izlemek için akşamüstü takılmacası.",
-        "Sanur limanından Gili adalarına geçiş yapacak olan var mı? Biletleri birlikte organize edelim.",
-        "Ubud'da geleneksel bir balili dans kursuna veya el sanatları atölyesine katılan oldu mu?",
-        "Bali sokak lezzetlerini (Nasi Goreng & Babi Guling) en hijyenik ve lezzetli yiyeceğimiz yer arayışı.",
-        "Ceningan ve Lembongan adalarına hafta sonu kaçamağı için bot bileti ve konaklama ayarlıyoruz.",
-        "Pura Lempuyang (Cennetin Kapısı) erken sabah fotoğraf çekimi için gece yola çıkıyoruz.",
-        "Bali geleneksel şifacı (Balian) ziyareti ve meditasyon seansı hakkında bilgi sahibi olan var mı?",
-        "Berawa sahilinde akşam yürüyüşü ve ardından akustik canlı müzik dinletisi olan bir mekana geçeceğiz.",
-        "Bali'de uzun dönem kalacak dijital göçebeler için villa paylaşımı veya ortak yaşam üzerine sohbet.",
-        "Taman Ayun tapınağı ve UNESCO kültür mirası su tapınakları turu için rehberli araç paylaşımı.",
-        "Nyepi (Sessizlik Günü) öncesi Ogoh-Ogoh geçit törenlerini izlemek için harika bir akşam planı.",
-        "Echo beach'te gün batımı sörfü sonrası sahilde hindistan cevizi eşliğinde sohbet seansı.",
-        "Bali'nin kuzeyinde dolunay seremonisine (Full Moon ceremony) local bir tapınakta katılım.",
-        "Kampung foreigner dostu mekanlarda akşam çalışma ve networking buluşması."
-      ];
-
-      const otherIndoCityPosts = {
-        "JAKARTA": [
-          "Jakarta'da Kota Tua bölgesinde tarihi bisiklet turu ve kafe molası için kimler var?",
-          "Grand Indonesia alışveriş merkezi civarındayım, akşam street food denemek isteyen yazabilir.",
-          "Thousand Islands (Kepulauan Seribu) için bu hafta sonu sürat botu organizasyonu yapıyoruz."
-        ],
-        "SURABAYA": [
-          "Surabaya'da tarihi Red Bridge ve House of Sampoerna müzesini gezecek arkadaş arıyorum.",
-          "Madura köprüsü üzerinden gün batımı manzarası izlemek ve lokal balık yemek için buluşalım.",
-          "Surabaya'nın meşhur Rawon çorbasını en iyi yapan esnaf lokantasını keşfe çıkıyoruz."
-        ],
-        "BANDUNG": [
-          "Bandung'un serin dağ havasında Tangkuban Perahu yanardağını ziyaret edeceğiz, araçta yer var.",
-          "Ciater sıcak su kaynaklarında hafta sonu dinlenmek ve doğa yürüyüşü yapmak isteyenler?",
-          "Jalan Braga caddesindeki tarihi kafelerde akşam kahvesi ve sohbet buluşması."
-        ],
-        "YOGYAKARTA": [
-          "Yogyakarta'da Borobudur ve Prambanan tapınakları gün doğumu turu için ortak arıyorum.",
-          "Malioboro caddesinde gece yürüyüşü ve geleneksel Gudeg tatlısı denemesi yapıyoruz.",
-          "Merapi yanardağı eteklerinde jeep safari turu için ekibe 2 kişi daha arıyoruz."
-        ],
-        "MEDAN": [
-          "Medan'dan Bukit Lawang'daki orangutan koruma alanına orman trekking turu planlıyorum.",
-          "Lake Toba (Toba Gölü) ve Samosir adasına hafta sonu kaçamağı için otobüs bileti alacağız.",
-          "Medan'ın meşhur durian meyvesini ve lokal kahvelerini tatmak için akşam buluşması."
-        ],
-        "LOMBOK": [
-          "Lombok'tan Gili Adaları'na geçiş yapıyorum, şnorkel ve dalış için harika bir gün olacak.",
-          "Kuta Lombok'ta muhteşem sörf plajlarını scooter ile keşfetmek isteyen gezgin var mı?",
-          "Rinjani dağı tırmanışı öncesi Senaru şelalelerinde kamp kurup hazırlık yapıyoruz."
-        ]
-      };
-
-      const multilangTexts = {
-        en: [
-          "Hey everyone! Currently staying in the city center. Anyone up for a coffee or dinner tonight?",
-          "Just arrived here! What are the must-visit places for a 3-day trip?",
-          "Weather is amazing today. Who wants to join a walking tour around historical spots?",
-          "Looking for travel companions to explore local night markets this weekend!",
-          "Great vibes and awesome local food here. Highly recommend trying street vendors."
-        ],
-        tr: [
-          "Selamlar! Şu an şehir merkezindeyim, akşam kahve veya yemek için eşlik etmek isteyen var mı?",
-          "Yeni geldim sayılır, 3 günlük kısa bir tur için mutlaka görülmesi gereken yerler neresi?",
-          "Hava harika, tarihi yerleri birlikte gezmek isteyen gezginler mesaj atabilir mi?",
-          "Bu hafta sonu yerel gece pazarlarını ve sokak lezzetlerini keşfedecek arkadaş arıyorum!",
-          "Şehir gerçekten çok hareketli ve insanlar çok misafirperver. Kesinlikle tavsiye ederim."
-        ],
-        ru: [
-          "Всем привет! Кто сейчас здесь? Ищу компанию прогуляться по центру вечером.",
-          "Только что приехал! Посоветуйте хорошие и недорогие кафе поблизости.",
-          "Какая прекрасная погода! Кто хочет сгонять на экскурсию вместе?",
-          "Ищу попутчиков для поездки по местным достопримечательностям на выходных."
-        ]
-      };
-
-      const replyPool = {
-        en: ["I'm down! Let me know where and when.", "Check out the old town area, totally worth it!", "Count me in for dinner!", "I was there yesterday, absolutely loved it."],
-        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmelisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
-        ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
-      };
-
-      const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
-      
-      superPopular.forEach(cityName => {
-        const loopCount = (cityName === 'BALI') ? detailedBaliPosts.length : 35;
-        for (let i = 0; i < loopCount; i++) {
-          const author = usernames[i % usernames.length];
-          const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
-          
-          let text = "";
-          if (cityName === 'BALI') {
-            text = detailedBaliPosts[i];
-          } else {
-            const textList = multilangTexts[langKey];
-            text = textList[i % textList.length] + ` (Meet-up #${i + 1})`;
-          }
-          
-          const hoursAgo = (i * 3) + 1;
-          const postDate = new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString();
-
-          posts.push({
-            id: idCounter++,
-            city: cityName,
-            text: text,
-            author: author,
-            date: postDate,
-            replies: [
-              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 1) * 3600 * 1000).toISOString() },
-              { id: idCounter++, author: usernames[(i + 7) % usernames.length], text: replyPool[langKey][1], date: new Date(Date.now() - (hoursAgo - 2) * 3600 * 1000).toISOString() }
-            ]
-          });
-        }
-      });
-
-      for (const [country, cityList] of Object.entries(initialCitiesData)) {
-        cityList.forEach((cityName) => {
-          if (!superPopular.includes(cityName)) {
-            const specificPosts = (country === "Indonesia 🇮🇩" && otherIndoCityPosts[cityName]) ? otherIndoCityPosts[cityName] : null;
-            const postLimit = specificPosts ? specificPosts.length : 4;
-
-            for (let k = 0; k < postLimit; k++) {
-              const author = usernames[(cityName.length + k) % usernames.length];
-              const replyAuthor = usernames[(cityName.length + k + 4) % usernames.length];
-              const langKey = k === 2 ? 'ru' : (k % 2 === 0 ? 'tr' : 'en');
-              const textList = multilangTexts[langKey];
-              const hoursAgo = (k + 1) * 10;
-
-              const textContent = specificPosts ? specificPosts[k] : `${cityName} update #${k + 1}: ` + textList[k % textList.length];
-
-              posts.push({
-                id: idCounter++,
-                city: cityName,
-                text: textContent,
-                author: author,
-                date: new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString(),
-                replies: [
-                  { id: idCounter++, author: replyAuthor, text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 2) * 3600 * 1000).toISOString() }
-                ]
-              });
-            }
-          }
-        });
-      }
-
-      return posts;
-    }
-
     const dict = {
       EN: {
         search: "Search country or city...",
@@ -1033,7 +899,7 @@
         replyBtn: "Reply",
         inbox: "Messages",
         adminPanel: "Approval Panel",
-        liveChatTitle: "Global Travel Chat Room (AI Enabled)",
+        liveChatTitle: "Global Travel Chat Room",
         chatPlaceholder: "Type a message or ask @gemini...",
         send: "Send",
         login: "Log In",
@@ -1059,7 +925,7 @@
         replyBtn: "Ответить",
         inbox: "Сообщения",
         adminPanel: "Панель модерации",
-        liveChatTitle: "Общий чат (с ИИ Gemini)",
+        liveChatTitle: "Общий чат путешественников",
         chatPlaceholder: "Напишите сообщение или спросите @gemini...",
         send: "Отправить",
         login: "Войти",
@@ -1085,7 +951,7 @@
         replyBtn: "Cevap Ver",
         inbox: "Mesajlar",
         adminPanel: "Onay Paneli",
-        liveChatTitle: "Genel Seyahat Sohbet Odası (Yapay Zeka Destekli)",
+        liveChatTitle: "Genel Seyahat Sohbet Odası",
         chatPlaceholder: "Mesaj yazın veya @gemini'ye sorun...",
         send: "Gönder",
         login: "Giriş Yap",
@@ -1111,7 +977,7 @@
         replyBtn: "Responder",
         inbox: "Mensajes",
         adminPanel: "Panel de Aprobación",
-        liveChatTitle: "Sala de Chat Global (Con IA)",
+        liveChatTitle: "Sala de Chat Global",
         chatPlaceholder: "Escribe un mensaje o pregunta a @gemini...",
         send: "Enviar",
         login: "Iniciar Sesión",
@@ -1137,7 +1003,7 @@
         replyBtn: "उत्तर दें",
         inbox: "संदेश",
         adminPanel: "अनुमोदन पैनल",
-        liveChatTitle: "वैश्विक यात्रा चैट (AI सक्षम)",
+        liveChatTitle: "वैश्विक यात्रा चैट",
         chatPlaceholder: "संदेश लिखें या @gemini से पूछें...",
         send: "भेजें",
         login: "लॉग इन",
@@ -1163,7 +1029,7 @@
         replyBtn: "回复",
         inbox: "消息",
         adminPanel: "审核面板",
-        liveChatTitle: "全球旅行聊天室 (AI支持)",
+        liveChatTitle: "全球旅行聊天室",
         chatPlaceholder: "发送消息或咨询 @gemini...",
         send: "发送",
         login: "登录",
@@ -1256,12 +1122,10 @@
 
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
-    // --- KESİN ÇÖZÜM: KULLANICI DEĞİŞİKLİKLERİNİ ESAS ALAN SİSTEM ---
     window.startTravelApp = async function() {
-      const { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, orderBy, onSnapshot } = window.firebaseModules;
+      const { collection, getDocs, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
-      // Kullanıcının tarayıcısında yaptığı silme/düzenleme işlemleri varsa onu yükle, yoksa varsayılanı kullan
       const savedCitiesJson = localStorage.getItem('travel_friend_cities_v5');
       if (savedCitiesJson) {
         citiesData = JSON.parse(savedCitiesJson);
@@ -1273,28 +1137,7 @@
       renderSidebar();
 
       const postsRef = collection(db, "posts");
-      const postsSnapshot = await getDocs(postsRef);
-
-      const existingTexts = new Set();
-      postsSnapshot.forEach(docSnap => {
-        existingTexts.add(docSnap.data().text);
-      });
-
-      if (postsSnapshot.size < 150) {
-        const richInitialPosts = generateRichForumPosts();
-        for (const p of richInitialPosts) {
-          if (!existingTexts.has(p.text)) {
-            await addDoc(postsRef, {
-              city: p.city.toUpperCase().trim(),
-              text: p.text,
-              author: p.author,
-              date: p.date,
-              replies: p.replies || []
-            });
-          }
-        }
-      }
-
+      
       onSnapshot(postsRef, (snapshot) => {
         posts = [];
         snapshot.forEach((docSnap) => {
@@ -1313,6 +1156,7 @@
       const usersRef = collection(db, "users");
       const usersSnap = await getDocs(usersRef);
       if (usersSnap.empty) {
+        const { addDoc } = window.firebaseModules;
         await addDoc(usersRef, { username: 'admin', email: 'admin@admin.com', password: '188199', isAdmin: true });
         await addDoc(usersRef, { username: 'caner_travels', email: 'caner@example.com', password: '123', isAdmin: false });
       }
@@ -1426,7 +1270,6 @@
       alert("City request rejected and removed.");
     }
 
-    // ŞEHİR SİLİNDİĞİNDE ARTIK KALICI OLARAK HAFIZAYA KAYDEDİLİR VE GERİ GELMEZ
     async function deleteCity(country, city, event) {
       event.stopPropagation();
       if (!confirm(`Delete "${city}"?`)) return;
@@ -1434,11 +1277,9 @@
       citiesData[country] = citiesData[country].filter(c => c !== city);
       if (citiesData[country].length === 0) delete citiesData[country];
       
-      // Güncel listeyi localStorage'a kalıcı olarak kaydet
       localStorage.setItem('travel_friend_cities_v5', JSON.stringify(citiesData));
 
       if (selectedCity === city) {
-        // Mevcut seçili şehir silindiyse başka bir şehre geç
         const firstCategory = Object.keys(citiesData)[0];
         selectedCity = firstCategory ? citiesData[firstCategory][0] : 'BANGKOK';
       }
@@ -1651,7 +1492,7 @@
       if (!container) return;
 
       if (liveChatMessages.length === 0) {
-        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 1rem;">No messages in global chat yet.</div>`;
+        container.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding: 2rem;">No messages in global chat yet. Be the first to say hello!</div>`;
         return;
       }
 
@@ -1664,7 +1505,7 @@
 
         const deleteChatBtn = (currentUser && currentUser.isAdmin) ? `<button class="btn-delete-post" style="padding:2px 6px; font-size:0.75rem;" onclick="deleteChatMessage('${m.firestoreId}')"><i class="fa-solid fa-trash"></i></button>` : '';
 
-        html += `<div class="chat-msg-item"><div>${authorDisplay} ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); margin-left:8px;">${m.time || ''}</span></div> ${deleteChatBtn}</div>`;
+        html += `<div class="chat-msg-item ${isAI ? 'ai-msg' : ''}"><div>${authorDisplay} ${m.text} <span style="font-size:0.7rem; color:var(--text-muted); margin-left:8px;">${m.time || ''}</span></div> ${deleteChatBtn}</div>`;
       });
       container.innerHTML = html;
       container.scrollTop = container.scrollHeight;
