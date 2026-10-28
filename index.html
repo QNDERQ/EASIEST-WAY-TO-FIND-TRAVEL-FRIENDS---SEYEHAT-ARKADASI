@@ -631,13 +631,11 @@
         </div>
       </div>
 
-      <!-- ŞEHİR BAŞLIĞI VE SAYACI ARTIK YAZI YAZMA KUTUSUNUN ÜSTÜNDE -->
       <div class="feed-header">
         <h2 id="currentFeedTitle">Posts</h2>
         <span id="postCountBadge" class="city-count">0 posts</span>
       </div>
 
-      <!-- YAZI YAZMA KUTUSU -->
       <div class="post-box">
         <textarea id="postText" placeholder="Write a tip, question or travel plan..."></textarea>
         <div class="post-box-actions">
@@ -817,7 +815,7 @@
       "Romania 🇷🇴", "Russia 🇷🇺", "Rwanda 🇷🇼",
       "Saint Kitts and Nevis 🇰🇳", "Saint Lucia 🇱🇨", "Saint Vincent and the Grenadines 🇻🇨", "Samoa 🇼🇸", "San Marino 🇸🇲", "Sao Tome and Principe 🇸🇹", "Saudi Arabia 🇸🇦", "Senegal 🇸🇳", "Serbia 🇷🇸", "Seychelles 🇸🇨", "Sierra Leone 🇸🇱", "Singapore 🇸🇬", "Slovakia 🇸🇰", "Slovenia 🇸🇮", "Solomon Islands 🇸🇧", "Somalia 🇸🇴", "South Africa 🇿🇦", "South Sudan 🇸🇸", "Spain 🇪🇸", "Sri Lanka 🇱🇰", "Sudan 🇸🇩", "Suriname 🇸🇷", "Sweden 🇸🇪", "Switzerland 🇨🇭", "Syria 🇸🇾",
       "Taiwan 🇹🇼", "Tajikistan 🇹🇯", "Tanzania 🇹🇿", "Thailand 🇹🇭", "Timor-Leste 🇹🇱", "Togo 🇹🇬", "Tonga 🇹🇴", "Trinidad and Tobago 🇹🇹", "Tunisia 🇹🇳", "Turkey 🇹🇷", "Turkmenistan 🇹🇲", "Tuvalu 🇹🇻",
-      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia 🇿🇲", "Zimbabwe 🇿🇼"
+      "Uganda 🇺🇬", "Ukraine 🇺🇦", "United Arab Emirates 🇦🇪", "United Kingdom 🇬🇧", "United States 🇺🇸", "Uruguay 🇺🇾", "Uzbekistan 🇺🇿", "Vanuatu 🇻🇺", "Vatican City 🇻🇦", "Venezuela 🇻🇪", "Vietnam 🇻🇳", "Yemen 🇾🇪", "Zambia ℤ🇲", "Zimbabwe 🇿🇼"
     ];
 
     const initialCitiesData = {
@@ -884,6 +882,115 @@
       "Kosovo 🇽🇰": ["PRISTINA"],
       "Slovenia 🇸🇮": ["LJUBLJANA"]
     };
+
+    function generateRichForumPosts() {
+      const posts = [];
+      let idCounter = 1000;
+
+      const usernames = [
+        "travel_bug92", "caner_travels", "nomad_kris", "katya_spb", "santiago_go", 
+        "phuket_surfer", "mert_bkk", "ozlem_explorer", "tom_globe", "serkan_istanbul",
+        "elena_nomad", "alex_uk", "jake_surf_co", "selin_bali", "oleg_bali", "claire_travels",
+        "burak_g", "misha_ru", "emma_w", "tarik_jp", "hannah_uk", "ezgi_bcn", "sophie_w", "david_r",
+        "ivan_moscow", "zeynep_y", "deniz_inter", "elena_rus", "max_berlin", "maria_travel"
+      ];
+
+      const detailedBaliPosts = [
+        "Canggu'da coworking alanında çalışıyorum, öğleden sonra Echo Beach'te sörf yapacak partner arıyorum.",
+        "Ubud'da orman içinde harika bir yoga kampındayım. Tapınak gezisi için yarın sabah katılmak isteyen var mı?",
+        "Seminyak sahilinde gün batımı eşliğinde akşam yemeği yiyeceğiz, eşlik etmek isteyen gezginler mesaj atabilir.",
+        "Uluwatu tapınakındaki Kecak dansı gösterisi için bilet alacağım, birlikte gidecek 2 kişi arıyorum.",
+        "Nusa Penida adasına sürat botuyla günübirlik geçiş yapacağız. Masrafları paylaşmak için harika bir fırsat!",
+        "Mount Batur zirvesine gün doğumu tırmanışı için rehberli tur ayarladık, gece yarısı otelden çıkıyoruz gelen var mı?",
+        "Sanur sahilinde sakin bir yürüyüş ve lokal deniz ürünleri restoranı için akşam buluşalım.",
+        "Canggu şık kafelerinde kahve molası ve remote work seansı yapmak isteyen dijital göçebeler yazsın.",
+        "Tegallalang pirinç teraslarında fotoğraf çekimi ve salıncak turu planlıyorum, araç kiralayacağız.",
+        "Jimbaran sahilinde mum ışığında mangal keyfi için bu akşam harika bir masa ayırtıyorum.",
+        "Bedugul'deki Ulun Danu Beratan tapınağına kuzey turu yapacağız, arabada 2 kişilik boş yerimiz var.",
+        "Amed'de şnorkel ve serbest dalış (freedive) noktalarını keşfedecek su altı tutkunu arıyorum.",
+        "Sidemen vadisinde yeşillikler içinde huzurlu bir yürüyüş ve köy turu yapmak isteyenler buraya.",
+        "Pererenan bölgesinde yeni açılan lokal bir vegan restoranda akşam yemeği buluşması yapıyoruz.",
+        "Lovina'da sabah erken saatlerde yunus izleme bot turu için ortak arıyorum.",
+        "Kuta'da sörf tahtası kiralayıp dalgalarla boğuşmak isteyen acemiler ve bilenler toplansın!",
+        "Denpasar geleneksel sanat pazarından hediyelik eşya alışverişi yaparken pazarlık yapmama yardım edecek var mı?",
+        "Canggu'daki popüler beach club'larda hafta sonu partisi için ekip kuruyoruz.",
+        "Ubud kraliyet sarayı ve geleneksel pazarı gezisi sonrası lokal warung'da öğle yemeği.",
+        "Bali'nin gizli şelalelerini (Gitgit & Sekumpul) motosikletle keşif turu düzenliyoruz.",
+        "Batur dağı eteklerinde doğal kaplıcalarda (hot springs) yorgunluk atmak paha biçilmez olacak.",
+        "Melasti beach cliff yolunda muhteşem gün batımı manzarası izlemek için akşamüstü buluşalım.",
+        "Bali bitki çayları ve Luwak kahvesi tadımı için bir plantasyon turuna katılıyorum, gelen var mı?",
+        "Green School ve çevresindeki ekolojik projeleri ziyaret etmek isteyen çevre dostu gezginler?",
+        "Canggu'daki popüler paten parkı ve skate sahnesini izlemek için akşamüstü takılmacası.",
+        "Sanur limanından Gili adalarına geçiş yapacak olan var mı? Biletleri birlikte organize edelim.",
+        "Ubud'da geleneksel bir balili dans kursuna veya el sanatları atölyesine katılan oldu mu?",
+        "Bali sokak lezzetlerini (Nasi Goreng & Babi Guling) en hijyenik ve lezzetli yiyeceğimiz yer arayışı.",
+        "Ceningan ve Lembongan adalarına hafta sonu kaçamağı için bot bileti ve konaklama ayarlıyoruz.",
+        "Pura Lempuyang (Cennetin Kapısı) erken sabah fotoğraf çekimi için gece yola çıkıyoruz.",
+        "Bali geleneksel şifacı (Balian) ziyareti ve meditasyon seansı hakkında bilgi sahibi olan var mı?",
+        "Berawa sahilinde akşam yürüyüşü ve ardından akustik canlı müzik dinletisi olan bir mekana geçeceğiz.",
+        "Bali'de uzun dönem kalacak dijital göçebeler için villa paylaşımı veya ortak yaşam üzerine sohbet.",
+        "Taman Ayun tapınağı ve UNESCO kültür mirası su tapınakları turu için rehberli araç paylaşımı.",
+        "Nyepi (Sessizlik Günü) öncesi Ogoh-Ogoh geçit törenlerini izlemek için harika bir akşam planı.",
+        "Echo beach'te gün batımı sörfü sonrası sahilde hindistan cevizi eşliğinde sohbet seansı.",
+        "Bali'nin kuzeyinde dolunay seremonisine (Full Moon ceremony) local bir tapınakta katılım.",
+        "Kampung foreigner dostu mekanlarda akşam çalışma ve networking buluşması."
+      ];
+
+      const multilangTexts = {
+        en: [
+          "Hey everyone! Currently staying in the city center. Anyone up for a coffee or dinner tonight?",
+          "Just arrived here! What are the must-visit places for a 3-day trip?",
+          "Weather is amazing today. Who wants to join a walking tour around historical spots?",
+          "Looking for travel companions to explore local night markets this weekend!",
+          "Great vibes and awesome local food here. Highly recommend trying street vendors."
+        ],
+        tr: [
+          "Selamlar! Şu an şehir merkezindeyim, akşam kahve veya yemek için eşlik etmek isteyen var mı?",
+          "Yeni geldim sayılır, 3 günlük kısa bir tur için mutlaka görülmesi gereken yerler neresi?",
+          "Hava harika, tarihi yerleri birlikte gezmek isteyen gezginler mesaj atabilir mi?",
+          "Bu hafta sonu yerel gece pazarlarını ve sokak lezzetlerini keşfedecek arkadaş arıyorum!",
+          "Şehir gerçekten çok hareketli ve insanlar çok misafirperver. Kesinlikle tavsiye ederim."
+        ],
+        ru: [
+          "Всем привет! Кто сейчас здесь? Ищу компанию прогуляться по центру вечером.",
+          "Только что приехал! Посоветуйте хорошие и недорогие кафе поблизости.",
+          "Какая прекрасная погода! Кто хочет сгонять на экскурсию вместе?",
+          "Ищу попутчиков для поездки по местным достопримечательностям на выходных."
+        ]
+      };
+
+      const replyPool = {
+        en: ["I'm down! Let me know where and when.", "Check out the old town area, totally worth it!", "Count me in for dinner!", "I was there yesterday, absolutely loved it."],
+        tr: ["Bana uyar, saat kaçta buluşuyoruz?", "Kesinlikle eski şehri ve çarşıyı gezmelisin!", "Akşam yemeği için ben de gelebilirim!", "Dün oradaydım, bayılacaksın."],
+        ru: ["Отлично, я с удовольствием присоединяюсь!", "Советую сходить в центр, там очень красиво.", "Классное место! Хорошей поездки."]
+      };
+
+      const superPopular = ['BANGKOK', 'BALI', 'SINGAPORE', 'TOKYO', 'LISBON', 'ISTANBUL', 'PHUKET', 'DUBAI', 'LONDON', 'NEW YORK', 'BARCELONA'];
+      
+      superPopular.forEach(cityName => {
+        const loopCount = (cityName === 'BALI') ? detailedBaliPosts.length : 10;
+        for (let i = 0; i < loopCount; i++) {
+          const author = usernames[i % usernames.length];
+          const langKey = i % 3 === 0 ? 'ru' : (i % 2 === 0 ? 'tr' : 'en');
+          
+          let text = (cityName === 'BALI') ? detailedBaliPosts[i] : multilangTexts[langKey][i % multilangTexts[langKey].length];
+          const hoursAgo = (i * 3) + 1;
+
+          posts.push({
+            id: idCounter++,
+            city: cityName,
+            text: text,
+            author: author,
+            date: new Date(Date.now() - hoursAgo * 3600 * 1000).toISOString(),
+            replies: [
+              { id: idCounter++, author: usernames[(i + 3) % usernames.length], text: replyPool[langKey][0], date: new Date(Date.now() - (hoursAgo - 1) * 3600 * 1000).toISOString() }
+            ]
+          });
+        }
+      });
+
+      return posts;
+    }
 
     const dict = {
       EN: {
@@ -1123,7 +1230,7 @@
     function closeAddCityModal() { document.getElementById('addCityModal').classList.remove('active'); }
 
     window.startTravelApp = async function() {
-      const { collection, getDocs, query, orderBy, onSnapshot } = window.firebaseModules;
+      const { collection, addDoc, getDocs, query, orderBy, onSnapshot } = window.firebaseModules;
       const db = window.db;
 
       const savedCitiesJson = localStorage.getItem('travel_friend_cities_v5');
@@ -1137,6 +1244,21 @@
       renderSidebar();
 
       const postsRef = collection(db, "posts");
+      const postsSnapshot = await getDocs(postsRef);
+
+      // VERİTABANI TAMAMEN BOŞSA OTOMATİK DOLDUR (SADECE BİR DEFA ÇALIŞIR)
+      if (postsSnapshot.empty) {
+        const defaultPosts = generateRichForumPosts();
+        for (const p of defaultPosts) {
+          await addDoc(postsRef, {
+            city: p.city.toUpperCase().trim(),
+            text: p.text,
+            author: p.author,
+            date: p.date,
+            replies: p.replies || []
+          });
+        }
+      }
       
       onSnapshot(postsRef, (snapshot) => {
         posts = [];
@@ -1156,7 +1278,6 @@
       const usersRef = collection(db, "users");
       const usersSnap = await getDocs(usersRef);
       if (usersSnap.empty) {
-        const { addDoc } = window.firebaseModules;
         await addDoc(usersRef, { username: 'admin', email: 'admin@admin.com', password: '188199', isAdmin: true });
         await addDoc(usersRef, { username: 'caner_travels', email: 'caner@example.com', password: '123', isAdmin: false });
       }
